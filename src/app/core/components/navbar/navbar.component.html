@@ -5,12 +5,12 @@
       routerLink="pokedex"
       routerLinkActive="active"
       (click)="loaderService.isLoading.set(true)"
-      [color]="url === 'pokedex' ? 'primary' : 'secondary'">POKEDEX</a>
+      [color]="url === 'pokedex' ? 'primary' : 'secondary'">{{ 'header.homePage' | translate }}</a>
     <a mat-raised-button
     routerLink="liked"
     routerLinkActive="active"
     (click)="loaderService.isLoading.set(true)"
-      [color]="url === 'liked' ? 'primary' : 'secondary'">LIKED</a>
+      [color]="url === 'liked' ? 'primary' : 'secondary'">{{ 'header.likedPage' | translate }}</a>
   </nav>
 </header>
 }
