@@ -35,7 +35,7 @@ export class AppComponent implements OnDestroy, OnInit {
       .subscribe(
         {
           next: () => this.loaderService.isLoading.set(false), 
-          error: () => console.error('Error encountered cannot hide loader'),
+          error: () => console.error('Cannot hide loader'),
         }
       );
   }
