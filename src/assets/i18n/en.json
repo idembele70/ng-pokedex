@@ -1,6 +1,6 @@
 {
- "header": {
-  "homePage": "pokedex",
-  "likedPage": "liked"
- }
+  "header": {
+    "homePage": "pokedex",
+    "likedPage": "liked"
+  }
 }
