@@ -1,0 +1,15 @@
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 38px;
+  padding: 30px;
+  flex-wrap: wrap;
+}
+
+a {
+  border-radius: 18px;
+  text-transform: uppercase;
+  letter-spacing: 6px;
+  padding: 7px 55px;
+}
