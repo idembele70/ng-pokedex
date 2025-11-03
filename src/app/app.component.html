@@ -2,5 +2,7 @@
 @if (loaderService.isLoading()) {
   <pokeball-loader />
 } @else {
+  <app-search-bar />
   <router-outlet (activate)="hideLoader()" />
+  <app-scroll-top-button />
 }
