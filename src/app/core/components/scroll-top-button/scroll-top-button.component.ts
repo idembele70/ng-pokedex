@@ -95,13 +95,13 @@ export class ScrollTopButtonComponent implements OnInit, OnDestroy {
       if (scrollTop > 300 && this.isHidden()) {
         this.ngZone.run(() => {
           this.isHidden.set(false);
-        })
+        });
       } else if (scrollTop < 300 && !this.isHidden()) {
         this.ngZone.run(() => {
           this.isHidden.set(true);
-        })
+        });
       }
-    })
+    });
   }
 
   private clearScrollToTopTimeout() {
