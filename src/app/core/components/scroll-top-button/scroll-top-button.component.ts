@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, HostBinding, Inject, NgZone, OnDestroy, OnInit, Renderer2, signal } from '@angular/core';
+import { Component, Inject, NgZone, OnDestroy, OnInit, Renderer2, signal } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
@@ -10,9 +10,11 @@ import { TranslatePipe } from '@ngx-translate/core';
   ],
   template: `
   <button [title]="'scrollTopButton.title' | translate"
-  [attr.aria-hidden]="isHidden"
-  [attr.focusable]="!isHidden"
-  [hidden]="isHidden">
+  [attr.aria-hidden]="isHidden()"
+  [attr.focusable]="!isHidden()"
+  [hidden]="isHidden()"
+  (click)="scrollToTop($event)"
+  >
     <svg color="white"
       height="24"
       width="24"
@@ -54,14 +56,27 @@ import { TranslatePipe } from '@ngx-translate/core';
   `,
 })
 export class ScrollTopButtonComponent implements OnInit, OnDestroy {
-  isHidden: boolean = true;
+  isHidden = signal<boolean>(true);
   private unListenScroll?: () => void;
+  private scrollToTopTimeoutId?: ReturnType<typeof setTimeout>;
+  private readonly SCROLL_TO_TOP_DELAY = 500;
 
   constructor(
     private readonly renderer: Renderer2,
     private readonly ngZone: NgZone,
     @Inject(DOCUMENT) private readonly document: Document,
   ) { }
+
+  scrollToTop(ev: Event) {
+    ev.preventDefault();
+    this.clearScrollToTopTimeout();
+    this.scrollToTopTimeoutId = setTimeout(() => {
+      this.document.scrollingElement?.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+    }, this.SCROLL_TO_TOP_DELAY);
+  }
 
   ngOnInit(): void {
     this.ngZone.runOutsideAngular(() => {
@@ -71,20 +86,26 @@ export class ScrollTopButtonComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.unListenScroll?.();
+    this.clearScrollToTopTimeout();
   }
 
   private listenScroll() {
     this.unListenScroll = this.renderer.listen(this.document, 'scroll', () => {
       const scrollTop = this.document.documentElement.scrollTop;
-      if (scrollTop > 300 && this.isHidden) {
+      if (scrollTop > 300 && this.isHidden()) {
         this.ngZone.run(() => {
-          this.isHidden = false;
+          this.isHidden.set(false);
         })
-      } else if (scrollTop < 300 && !this.isHidden) {
+      } else if (scrollTop < 300 && !this.isHidden()) {
         this.ngZone.run(() => {
-          this.isHidden = true
+          this.isHidden.set(true);
         })
       }
     })
+  }
+
+  private clearScrollToTopTimeout() {
+    if (this.scrollToTopTimeoutId)
+      clearTimeout(this.scrollToTopTimeoutId);
   }
 }
