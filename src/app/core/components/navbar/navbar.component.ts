@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatGridListModule } from '@angular/material/grid-list';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { filter, map, Observable } from 'rxjs';
@@ -10,8 +8,6 @@ import { LoaderService } from '../../services/loader.service';
   selector: 'app-navbar',
   standalone: true,
   imports: [
-    MatButtonModule,
-    MatGridListModule,
     RouterLink,
     RouterLinkActive,
     AsyncPipe,

@@ -4,7 +4,7 @@ import { LikedComponent } from './features/liked/liked.component';
 
 export const routes: Routes = [
   {
-    path: 'pokedex',
+    path: 'home',
     component: PokedexComponent,
   },
   {
@@ -13,6 +13,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'pokedex',
+    redirectTo: 'home',
   },
 ];

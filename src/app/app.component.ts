@@ -7,6 +7,8 @@ import { LoaderService } from './core/services/loader.service';
 import { PokeballLoaderComponent } from './shared/components/pokeball-loader/pokeball-loader.component';
 import { DEFAULT_LANG, SUPPORTED_LANGS } from './config/i18n.config';
 import { TranslateService } from '@ngx-translate/core';
+import { SearchBarComponent } from "./core/components/search-bar/search-bar.component";
+import { ScrollTopButtonComponent } from './core/components/scroll-top-button/scroll-top-button.component';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +18,9 @@ import { TranslateService } from '@ngx-translate/core';
     RouterOutlet,
     NavbarComponent,
     PokeballLoaderComponent,
-  ],
+    SearchBarComponent,
+    ScrollTopButtonComponent,
+],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

@@ -2,5 +2,19 @@
   "header": {
     "homePage": "pokedex",
     "likedPage": "liked"
+  },
+  "searchBars": {
+    "nameInput": {
+      "placeholder": "Search name"
+    },
+    "idInput": {
+      "placeholder": "ID"
+    },
+    "typeInput": {
+      "placeholder": "Type"
+    }
+  },
+  "scrollTopButton": {
+    "title": "Scroll to top"
   }
 }
