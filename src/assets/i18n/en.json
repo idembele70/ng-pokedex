@@ -16,5 +16,13 @@
   },
   "scrollTopButton": {
     "title": "Scroll to top"
+  },
+  "pokemons": {
+    "card": {
+      "favoriteBtn": {
+        "add": "Add this Pokemon to favorites",
+        "remove": "Remove this Pokemon from favorites"
+      }
+    }
   }
 }

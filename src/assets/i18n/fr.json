@@ -16,5 +16,13 @@
   },
   "scrollTopButton": {
     "title": "Retour en haut"
+  },
+  "pokemons": {
+    "card": {
+      "favoriteBtn": {
+        "add": "Ajouter ce Pokémon aux favoris",
+        "remove": "Enlever ce Pokémon des favoris"
+      }
+    }
   }
 }

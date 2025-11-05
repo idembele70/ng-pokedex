@@ -1,12 +1,14 @@
 import { Component, input, output } from '@angular/core';
 import { Pokemon } from '../../models/pokemon.model';
 import { TypeColorPipe } from './../../pipes/type-color.pipe';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-card-item',
   standalone: true,
   imports: [
     TypeColorPipe,
+    TranslatePipe,
   ],
   template: `
       <div class="img-wrapper">
@@ -29,7 +31,10 @@ import { TypeColorPipe } from './../../pipes/type-color.pipe';
       <div role="button"
         (click)="toggleFavorite.emit(pokemon())"
         class="thumb-up-wrapper"
-        [class.favorite]="isFavorite()">
+        [class.favorite]="isFavorite()"
+        [title]="('pokemons.card.favoriteBtn.' +
+          (isFavorite() ? 'remove' : 'add')) | translate"
+        >
         <svg
           width="15"
           height="15"
