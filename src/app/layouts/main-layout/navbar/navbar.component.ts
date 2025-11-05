@@ -3,7 +3,7 @@ import { Component, inject } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { filter, map, Observable } from 'rxjs';
-import { LoaderService } from '../../services/loader.service';
+import { LoaderService } from '../../../core/services/loader.service';
 @Component({
   selector: 'app-navbar',
   standalone: true,

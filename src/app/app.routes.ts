@@ -1,16 +1,8 @@
 import { Routes } from '@angular/router';
-import { PokedexComponent } from './features/pokedex/pokedex.component';
-import { LikedComponent } from './features/liked/liked.component';
+import { POKEMONS_ROUTES } from './features/pokemons/pokemons.routes';
 
 export const routes: Routes = [
-  {
-    path: 'home',
-    component: PokedexComponent,
-  },
-  {
-    path: 'liked',
-    component: LikedComponent,
-  },
+  ...POKEMONS_ROUTES,
   {
     path: '**',
     redirectTo: 'home',
