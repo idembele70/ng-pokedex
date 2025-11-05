@@ -8,7 +8,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class TypeColorPipe implements PipeTransform {
 
   transform(type: string): string {
-    const prefix = '#'
+    const prefix = '#';
     switch (type) {
       case "Electric": return `${prefix}FFE175`;
       case "Grass": return `${prefix}B4FE7B`;
@@ -17,7 +17,7 @@ export class TypeColorPipe implements PipeTransform {
       case "Ghost": return `${prefix}805594`;
       case "Rock": return `${prefix}898373`;
       case "Ground": return `${prefix}CA9F5E`;
-      case "water": return `${prefix}FFE175`;
+      case "water": return `${prefix}88D1FB`;
       case "Fire": return `${prefix}FF8A8A`;
       case "Ice": return `${prefix}C6EAFF`;
       case "Fighting": return `${prefix}FFB169`;
@@ -25,7 +25,7 @@ export class TypeColorPipe implements PipeTransform {
       case "Psychic": return `${prefix}FFB7FC`;
       case "Flying": return `${prefix}5F9FFF`;
       case "Dragon": return `${prefix}C699FF`;
-      case "Normal": return `${prefix}88D1FB`;
+      case "Normal": return `${prefix}CACACA`;
       default: return `${prefix}CACACA`;
     }
   }
