@@ -1,7 +1,8 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, signal } from '@angular/core';
 import { Pokemon } from '../../models/pokemon.model';
 import { TypeColorPipe } from './../../pipes/type-color.pipe';
 import { TranslatePipe } from '@ngx-translate/core';
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-card-item',
@@ -9,10 +10,18 @@ import { TranslatePipe } from '@ngx-translate/core';
   imports: [
     TypeColorPipe,
     TranslatePipe,
+    NgOptimizedImage,
   ],
   template: `
       <div class="img-wrapper">
-        <img [src]="pokemon().img" [alt]="pokemon().name" />
+        <img
+          [ngSrc]="pokemon().img"
+          [alt]="pokemon().name"
+          width="100"
+          height="100"
+          [priority]="priority()"
+          (error)="pokemon().img = 'assets/images/error-404.png'"
+          />
       </div>
       <div class="content-wrapper">
         <div class="title-wrapper">
@@ -163,4 +172,5 @@ export class CardItemComponent {
   pokemon = input.required<Pokemon>();
   isFavorite = input<boolean>(false);
   toggleFavorite = output<Pokemon>();
+  priority = input<boolean>(false);
 }

@@ -1,6 +1,9 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, Inject, NgZone, OnDestroy, OnInit, Renderer2, signal } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
+import { LoaderService } from '../../../core/services/loader.service';
+import { PokemonsService } from '../../../features/pokemons/services/pokemons.service';
+import { Subscription, timer } from 'rxjs';
 
 @Component({
   selector: 'app-scroll-top-button',
@@ -56,15 +59,20 @@ import { TranslatePipe } from '@ngx-translate/core';
   `,
 })
 export class ScrollTopButtonComponent implements OnInit, OnDestroy {
-  isHidden = signal<boolean>(true);
   private unListenScroll?: () => void;
   private scrollToTopTimeoutId?: ReturnType<typeof setTimeout>;
+  private timerSub?: Subscription;
   private readonly SCROLL_TO_TOP_DELAY = 500;
+  private readonly SCROLL_THRESHOLD = 130;
+
+  readonly isHidden = signal<boolean>(true);
 
   constructor(
     private readonly renderer: Renderer2,
     private readonly ngZone: NgZone,
     @Inject(DOCUMENT) private readonly document: Document,
+    private readonly loaderService: LoaderService,
+    private readonly pokemonsService: PokemonsService,
   ) { }
 
   scrollToTop(ev: Event) {
@@ -87,25 +95,58 @@ export class ScrollTopButtonComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.unListenScroll?.();
     this.clearScrollToTopTimeout();
+    this.cleanUpTimerSubscription();
   }
 
   private listenScroll() {
     this.unListenScroll = this.renderer.listen(this.document, 'scroll', () => {
-      const scrollTop = this.document.documentElement.scrollTop;
-      if (scrollTop > 300 && this.isHidden()) {
-        this.ngZone.run(() => {
-          this.isHidden.set(false);
-        });
-      } else if (scrollTop < 300 && !this.isHidden()) {
-        this.ngZone.run(() => {
-          this.isHidden.set(true);
-        });
-      }
+      this.loadMorePokemon();
+      this.toggleScrollToTopBtn();
     });
   }
 
   private clearScrollToTopTimeout() {
     if (this.scrollToTopTimeoutId)
       clearTimeout(this.scrollToTopTimeoutId);
+  }
+
+  private toggleScrollToTopBtn() {
+    const scrollTop = this.document.documentElement.scrollTop;
+    if (scrollTop > 300 && this.isHidden()) {
+      this.ngZone.run(() => {
+        this.isHidden.set(false);
+      });
+    } else if (scrollTop < 300 && !this.isHidden()) {
+      this.ngZone.run(() => {
+        this.isHidden.set(true);
+      });
+    }
+  }
+
+  private loadMorePokemon() {
+    const { scrollHeight, scrollTop, clientHeight } = this.document.documentElement;
+    const scrollMaxHeight = scrollHeight - clientHeight;
+    const scrollPosition = Math.ceil(scrollTop);
+
+    if (
+      scrollPosition + this.SCROLL_THRESHOLD  >= scrollMaxHeight &&
+      this.pokemonsService.currentPage() < this.pokemonsService.totalPages() &&
+      !this.loaderService.isLoadingMore()
+    ) {
+      this.cleanUpTimerSubscription();
+      this.ngZone.run(() => {
+        this.loaderService.setIsLoadingMore(true);
+        this.timerSub = timer(this.loaderService.DURATION).subscribe(
+          () => {
+            this.pokemonsService.updatePageAndFetch();
+            this.loaderService.setIsLoadingMore(false);
+          });
+      });
+    }
+  }
+
+  private cleanUpTimerSubscription() {
+    if (this.timerSub)
+      this.timerSub.unsubscribe();
   }
 }

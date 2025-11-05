@@ -1,10 +1,11 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription, timer } from 'rxjs';
 import { DEFAULT_LANG, SUPPORTED_LANGS } from '../../config/i18n.config';
 import { LoaderService } from '../../core/services/loader.service';
+import { PokemonsService } from '../../features/pokemons/services/pokemons.service';
 import { PokeballLoaderComponent } from '../../shared/components/pokeball-loader/pokeball-loader.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { ScrollTopButtonComponent } from './scroll-top-button/scroll-top-button.component';
@@ -21,13 +22,18 @@ import { SearchBarComponent } from './search-bar/search-bar.component';
     SearchBarComponent,
     ScrollTopButtonComponent,
   ],
+
+  providers: [
+    PokemonsService,
+  ],
   template: `
     <app-navbar />
       @if (loaderService.isLoading()) {
         <pokeball-loader />
       } @else {
         <app-search-bar />
-        <router-outlet (activate)="hideLoader()" />
+        <router-outlet (activate)="hideLoader()"
+        (deactivate)="loaderService.isLoading.set(true)" />
         <app-scroll-top-button />
       }
   `,
@@ -46,11 +52,12 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     this.hideLoader();
   }
   ngOnDestroy(): void {
-    this.cleanUpSubscription();
+    this.cleanUpTimerSubscription();
   }
 
   hideLoader() {
-    this.timerSub?.unsubscribe();
+    this.cleanUpTimerSubscription();
+
     this.timerSub = timer(this.loaderService.DURATION)
       .subscribe(
         {
@@ -59,8 +66,9 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
       );
   }
 
-  private cleanUpSubscription() {
-    this.timerSub?.unsubscribe();
+  private cleanUpTimerSubscription() {
+    if (this.timerSub)
+      this.timerSub.unsubscribe();
   }
 
   private loadLang() {
