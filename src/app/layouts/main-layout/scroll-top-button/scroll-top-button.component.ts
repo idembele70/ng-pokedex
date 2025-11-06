@@ -1,9 +1,9 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, Inject, NgZone, OnDestroy, OnInit, Renderer2, signal } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
+import { Subscription, timer } from 'rxjs';
 import { LoaderService } from '../../../core/services/loader.service';
 import { PokemonsService } from '../../../features/pokemons/services/pokemons.service';
-import { Subscription, timer } from 'rxjs';
 
 @Component({
   selector: 'app-scroll-top-button',
@@ -130,7 +130,7 @@ export class ScrollTopButtonComponent implements OnInit, OnDestroy {
 
     if (
       scrollPosition + this.SCROLL_THRESHOLD  >= scrollMaxHeight &&
-      this.pokemonsService.currentPage() < this.pokemonsService.totalPages() &&
+      !this.pokemonsService.isLastPage() &&
       !this.loaderService.isLoadingMore()
     ) {
       this.cleanUpTimerSubscription();
@@ -138,7 +138,7 @@ export class ScrollTopButtonComponent implements OnInit, OnDestroy {
         this.loaderService.setIsLoadingMore(true);
         this.timerSub = timer(this.loaderService.DURATION).subscribe(
           () => {
-            this.pokemonsService.updatePageAndFetch();
+            this.pokemonsService.loadMorePokemons();
             this.loaderService.setIsLoadingMore(false);
           });
       });
