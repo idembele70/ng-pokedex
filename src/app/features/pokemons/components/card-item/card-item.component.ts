@@ -1,8 +1,8 @@
-import { Component, input, output, signal } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
+import { Component, input, output } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Pokemon } from '../../models/pokemon.model';
 import { TypeColorPipe } from './../../pipes/type-color.pipe';
-import { TranslatePipe } from '@ngx-translate/core';
-import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-card-item',

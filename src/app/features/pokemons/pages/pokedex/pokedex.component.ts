@@ -3,6 +3,7 @@ import { LoaderService } from '../../../../core/services/loader.service';
 import { PokeballLoaderComponent } from '../../../../shared/components/pokeball-loader/pokeball-loader.component';
 import { CardItemComponent } from '../../components/card-item/card-item.component';
 import { PokemonsService } from '../../services/pokemons.service';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-pokedex',
@@ -10,10 +11,15 @@ import { PokemonsService } from '../../services/pokemons.service';
   imports: [
     CardItemComponent,
     PokeballLoaderComponent,
+    TranslatePipe,
   ],
   template: `
   @for (pokemon of pokemonsService.currentPokemons(); track pokemon._id) {
     <app-card-item [pokemon]="pokemon" [priority]="$index <= pokemonsService.limitPerPage()" />
+  }
+  @if(pokemonsService.currentPokemons().length === 0 &&
+    !loaderService.isLoadingMore()) {
+    <h2>{{ 'pokemons.emptyList' | translate}}</h2>
   }
   <pokeball-loader
     [notFixed]="true"
@@ -29,10 +35,6 @@ import { PokemonsService } from '../../services/pokemons.service';
     width: 100%;
     max-width: 985px;
     margin: 0 auto;
-  }
-  .loader-wrapper {
-    flex: 1 1 100%; display: flex; justify-content: center; align-items: center;
-    z-index:6;
   }
   `
 })

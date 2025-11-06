@@ -23,6 +23,14 @@
         "add": "Ajouter ce Pokémon aux favoris",
         "remove": "Enlever ce Pokémon des favoris"
       }
+    },
+    "emptyList": "Aucun Pokémon à afficher pour le moment",
+    "notification": {
+      "fetchCurrentPage": {
+        "messages": {
+          "error": "Impossible de récupérer les pokémons. Veuillez réessayer plus tard."
+        }
+      }
     }
   }
 }

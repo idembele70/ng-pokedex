@@ -1,7 +1,9 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { tap } from 'rxjs';
+import { catchError, finalize, tap } from 'rxjs';
 import { environment } from '../../../../environments/environment.development';
+import { LoaderService } from '../../../core/services/loader.service';
+import { NotificationService } from '../../../core/services/notification.service';
 import { Pokemon, PokemonPage } from '../models/pokemon.model';
 
 @Injectable()
@@ -17,7 +19,10 @@ export class PokemonsService {
   readonly isLastPage = computed(() => this._currentPage() >= this._totalPages());
   readonly limitPerPage = computed(() => this._limitPerPage());
 
-  constructor() {
+  constructor(
+    private readonly loaderService: LoaderService,
+    private readonly notificationService: NotificationService,
+  ) {
     this.fetchCurrentPage();
   }
 
@@ -35,6 +40,7 @@ export class PokemonsService {
   }
 
   private fetchCurrentPage(): void {
+    this.loaderService.setIsLoadingMore(true);
     this.httpClient.get<PokemonPage>(this._API_URL, {
       params: this._params
     }).pipe(
@@ -42,7 +48,9 @@ export class PokemonsService {
         this._currentPokemons.update(prev => [...prev, ...res.pokemons]);
         this._currentPage.set(res.currentPage);
         this._totalPages.set(res.totalPages);
-      })
+      }),
+      catchError(() => this.notificationService.notifyError('pokemons.notification.fetchCurrentPage')),
+      finalize(() => this.loaderService.setIsLoadingMore(false)),
     ).subscribe();
   }
 }

@@ -113,13 +113,9 @@ export class ScrollTopButtonComponent implements OnInit, OnDestroy {
   private toggleScrollToTopBtn() {
     const scrollTop = this.document.documentElement.scrollTop;
     if (scrollTop > 300 && this.isHidden()) {
-      this.ngZone.run(() => {
-        this.isHidden.set(false);
-      });
+      this.ngZone.run(() => this.isHidden.set(false));
     } else if (scrollTop < 300 && !this.isHidden()) {
-      this.ngZone.run(() => {
-        this.isHidden.set(true);
-      });
+      this.ngZone.run(() => this.isHidden.set(true));
     }
   }
 
@@ -129,7 +125,7 @@ export class ScrollTopButtonComponent implements OnInit, OnDestroy {
     const scrollPosition = Math.ceil(scrollTop);
 
     if (
-      scrollPosition + this.SCROLL_THRESHOLD  >= scrollMaxHeight &&
+      scrollPosition + this.SCROLL_THRESHOLD >= scrollMaxHeight &&
       !this.pokemonsService.isLastPage() &&
       !this.loaderService.isLoadingMore()
     ) {
@@ -137,10 +133,7 @@ export class ScrollTopButtonComponent implements OnInit, OnDestroy {
       this.ngZone.run(() => {
         this.loaderService.setIsLoadingMore(true);
         this.timerSub = timer(this.loaderService.DURATION).subscribe(
-          () => {
-            this.pokemonsService.loadMorePokemons();
-            this.loaderService.setIsLoadingMore(false);
-          });
+          () => this.pokemonsService.loadMorePokemons());
       });
     }
   }
