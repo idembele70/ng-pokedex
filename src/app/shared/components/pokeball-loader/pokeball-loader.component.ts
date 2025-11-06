@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { LoaderService } from '../../../core/services/loader.service';
 
 @Component({
@@ -6,7 +6,10 @@ import { LoaderService } from '../../../core/services/loader.service';
   standalone: true,
   imports: [],
   template: `
-    <div class="loader-container" [class.is-visible]="loaderService.isLoading()">
+    <div class="loader-container"
+      [class.fixed]="loaderService.isLoading()"
+      [class.not-fixed]="notFixed()"
+      [class.is-visible]="loaderService.isLoading() || loaderService.isLoadingMore()">
       <div class="pokeball">
         <div class="pokeball-content">
           <div class="pokeball-content-center">
@@ -20,4 +23,5 @@ import { LoaderService } from '../../../core/services/loader.service';
 })
 export class PokeballLoaderComponent {
   protected readonly loaderService = inject(LoaderService);
+  notFixed = input<boolean>(false);
 }

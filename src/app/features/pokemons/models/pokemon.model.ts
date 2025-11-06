@@ -5,3 +5,10 @@ export interface Pokemon {
   img: string;
   type: string[];
 }
+
+export interface PokemonPage {
+  pokemons: Pokemon[];
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+}

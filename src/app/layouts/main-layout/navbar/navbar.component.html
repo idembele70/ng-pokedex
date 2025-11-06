@@ -1,12 +1,8 @@
-@if(url$ | async; as url ){
   <header>
     <nav>
       <a routerLink="home"
-        routerLinkActive="active"
-        (click)="loaderService.isLoading.set(true)">{{ 'header.homePage' | translate }}</a>
+        routerLinkActive="active">{{ 'header.homePage' | translate }}</a>
       <a routerLink="liked"
-        routerLinkActive="active"
-        (click)="loaderService.isLoading.set(true)">{{ 'header.likedPage' | translate }}</a>
+        routerLinkActive="active">{{ 'header.likedPage' | translate }}</a>
   </nav>
 </header>
-}

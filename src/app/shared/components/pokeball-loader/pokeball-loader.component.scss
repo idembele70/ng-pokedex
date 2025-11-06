@@ -1,10 +1,15 @@
+:host {
+  &:has(.not-fixed) {
+    flex: 1 1 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 50px;
+  }
+}
+
 .loader-container {
-  position: fixed;
-  top: 96px;
-  left: 0;
   background-color: #f9f9f9;
-  height: 100vh;
-  width: 100vw;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -15,11 +20,26 @@
   &.is-visible {
     opacity: 1;
     visibility: visible;
+    z-index: 6;
   }
 
-  @media (max-width: 488px) {
-    top: 140px;
+  &.fixed {
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    top: 96px;
+    left: 0;
+    @media (max-width: 488px) {
+      top: 140px;
+    }
   }
+
+  &.not-fixed {
+    position: initial;
+    height: 120px;
+    width: 120px;
+  }
+
 }
 
 @keyframes load {
