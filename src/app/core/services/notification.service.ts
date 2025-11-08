@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { TranslateService, Translation } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { EMPTY, Observable, switchMap, tap } from 'rxjs';
 
@@ -13,7 +13,7 @@ export class NotificationService {
     private readonly translate: TranslateService,
   ) { }
 
-  notifySuccess(prefix: string): Observable<Translation> {
+  notifySuccess(prefix: string): Observable<string> {
     const suffix = '.messages.success';
     return this.translate.get(`${prefix}${suffix}`).pipe(
       tap((message) => this.toastr.success(message))

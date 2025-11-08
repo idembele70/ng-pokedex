@@ -4,7 +4,7 @@ import { catchError, Observable, switchMap, tap } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
-import { authPayload, RegisterReponse } from '../models/auth-dialog.model';
+import { authPayload, RegisterResponse } from '../models/auth-dialog.model';
 
 @Injectable()
 export class AuthDialogService {
@@ -16,9 +16,9 @@ export class AuthDialogService {
     private readonly authService: AuthService,
   ) { }
 
-  register(payload: authPayload): Observable<RegisterReponse> {
+  register(payload: authPayload): Observable<RegisterResponse> {
     const prefix = 'auth.register';
-    return this.http.post<RegisterReponse>(`${this._BASE_URL}/register`, payload, {
+    return this.http.post<RegisterResponse>(`${this._BASE_URL}/register`, payload, {
       headers: this._headers,
     }).pipe(
       switchMap(() => this.notificationService.notifySuccess(prefix)),

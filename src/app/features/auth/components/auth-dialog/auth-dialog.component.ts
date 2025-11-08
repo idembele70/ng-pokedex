@@ -14,7 +14,7 @@ import { passwordMatchValidator } from '../../validators/password-match.validato
   imports: [
     TranslatePipe,
     ReactiveFormsModule,
-    PokeballLoaderComponent
+    PokeballLoaderComponent,
   ],
   providers: [
     AuthDialogService,
@@ -33,10 +33,10 @@ import { passwordMatchValidator } from '../../validators/password-match.validato
             type="email"
             formControlName="email"
             name="email" />
-            @if(authForm.get('email'); as emailControl) {
-              @if(emailControl.dirty && emailControl.hasError('required')) {
+            @if (authForm.get('email'); as emailControl) {
+              @if (emailControl.dirty && emailControl.hasError('required')) {
                 <span class="error">{{ 'auth.email.error.required' | translate}}</span>
-              } @else if(emailControl.touched && emailControl.hasError('email')) {
+              } @else if (emailControl.touched && emailControl.hasError('email')) {
                 <span class="error">{{ 'auth.email.error.invalid' | translate}}</span>
               }
             }
@@ -49,8 +49,8 @@ import { passwordMatchValidator } from '../../validators/password-match.validato
             [placeholder]="'auth.password.placeholder' | translate"
             formControlName="password"
             name="password" />
-            @if(authForm.get('password'); as passwordControl) {
-              @if(passwordControl.dirty && passwordControl.hasError('minlength')) {
+            @if (authForm.get('password'); as passwordControl) {
+              @if (passwordControl.dirty && passwordControl.hasError('minlength')) {
                 <span class="error">
                 {{ 'auth.password.error.minLength' |
                   translate:{ min: PASSWORD_MIN_LENGTH}
@@ -63,7 +63,7 @@ import { passwordMatchValidator } from '../../validators/password-match.validato
               }
             }
         </div>
-        @if(authService.isRegisteredMode()) {
+        @if (authService.isRegisteredMode()) {
           <div class="row">
             <input
               class="base-input"
@@ -72,7 +72,7 @@ import { passwordMatchValidator } from '../../validators/password-match.validato
               type="password"
               formControlName="confirmPassword"
               name="confirmPassword" />
-              @if(passwordMisMatchError) {
+              @if (passwordMisMatchError) {
                 <span class="error">
                   {{ 'auth.password.error.passwordsMisMatch' | translate}}
                 </span>

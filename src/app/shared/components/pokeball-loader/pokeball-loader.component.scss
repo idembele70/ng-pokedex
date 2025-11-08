@@ -15,7 +15,9 @@
   justify-content: center;
   opacity: 0;
   visibility: hidden;
-  transition: opacity, visibility 250ms ease;
+  transition-property: opacity, visibility;
+  transition-timing-function: ease;
+  transition-duration: 250ms;
 
   &.is-visible {
     opacity: 1;

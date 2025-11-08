@@ -6,7 +6,7 @@ export interface authPayload {
   password: string;
 }
 
-export interface RegisterReponse {
+export interface RegisterResponse {
   message: string;
   user: {
     id: string;
