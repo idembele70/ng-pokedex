@@ -32,5 +32,42 @@
         }
       }
     }
+  },
+  "auth": {
+    "email": {
+      "placeholder": "Email",
+      "error": {
+        "invalid": "L'email n'est pas valide",
+        "exist": "",
+        "required": "L'email est requis"
+      }
+    },
+    "password": {
+      "placeholder": "Mot de passe",
+      "error": {
+        "passwordsMisMatch": "Les mots de passe ne correspondent pas",
+        "minLength": "Le mot de passe doit contenir au moins {{min}} caractères",
+        "required": "Le mot de passe est requis"
+      }
+    },
+    "confirmPassword": {
+      "placeholder": "Confirmer mot de passe",
+      "error": {
+        "required": "La confirmation du mot de passe est requise"
+      }
+    },
+    "button": {
+      "login": "Se connecter",
+      "register": "S'inscrire",
+      "prefix": {
+        "or": "ou"
+      }
+    },
+    "register": {
+      "messages": {
+        "error": "Le compte n'a pas pu être créé",
+        "success": "Compte créé avec succès !"
+      }
+    }
   }
 }

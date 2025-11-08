@@ -2,6 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import { Component, Inject, NgZone, OnDestroy, OnInit, Renderer2, signal } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Subscription, timer } from 'rxjs';
+import { AuthService } from '../../../core/services/auth.service';
 import { LoaderService } from '../../../core/services/loader.service';
 import { PokemonsService } from '../../../features/pokemons/services/pokemons.service';
 
@@ -73,6 +74,7 @@ export class ScrollTopButtonComponent implements OnInit, OnDestroy {
     @Inject(DOCUMENT) private readonly document: Document,
     private readonly loaderService: LoaderService,
     private readonly pokemonsService: PokemonsService,
+    private readonly authService: AuthService,
   ) { }
 
   scrollToTop(ev: Event) {
@@ -112,6 +114,8 @@ export class ScrollTopButtonComponent implements OnInit, OnDestroy {
 
   private toggleScrollToTopBtn() {
     const scrollTop = this.document.documentElement.scrollTop;
+    if (this.authService.isAuthDialogVisible()) return;
+
     if (scrollTop > 300 && this.isHidden()) {
       this.ngZone.run(() => this.isHidden.set(false));
     } else if (scrollTop < 300 && !this.isHidden()) {
@@ -127,7 +131,8 @@ export class ScrollTopButtonComponent implements OnInit, OnDestroy {
     if (
       scrollPosition + this.SCROLL_THRESHOLD >= scrollMaxHeight &&
       !this.pokemonsService.isLastPage() &&
-      !this.loaderService.isLoadingMore()
+      !this.loaderService.isLoadingMore() &&
+      !this.authService.isAuthDialogVisible()
     ) {
       this.cleanUpTimerSubscription();
       this.ngZone.run(() => {

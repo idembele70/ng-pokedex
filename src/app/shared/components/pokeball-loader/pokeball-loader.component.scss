@@ -15,7 +15,7 @@
   justify-content: center;
   opacity: 0;
   visibility: hidden;
-  transition: all 250ms ease;
+  transition: opacity, visibility 250ms ease;
 
   &.is-visible {
     opacity: 1;
@@ -32,12 +32,31 @@
     @media (max-width: 488px) {
       top: 140px;
     }
+    & .pokeball {
+      border-width: 13px;
+    }
+  }
+
+  &.small {
+    max-width: 30px;
+    max-height: 30px;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    & .pokeball {
+      border-width: 2px;
+    }
   }
 
   &.not-fixed {
     position: initial;
     height: 120px;
     width: 120px;
+
+    & .pokeball {
+      border-width: 6px;
+    }
   }
 
 }
@@ -52,13 +71,13 @@
   width: 80%;
   max-width: 250px;
   aspect-ratio: 1;
-  border: 13px solid #383b4f;
+  border-style: solid;
+  border-color: #383b4f;
   border-radius: 50%;
   background-image: linear-gradient(#f51939 50%, white 50%);
   animation: load 1s infinite;
   position: relative;
 }
-
 
 .pokeball-content {
   width: 36%;

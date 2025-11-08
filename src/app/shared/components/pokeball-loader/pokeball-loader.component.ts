@@ -7,9 +7,13 @@ import { LoaderService } from '../../../core/services/loader.service';
   imports: [],
   template: `
     <div class="loader-container"
-      [class.fixed]="loaderService.isLoading()"
+      [class.fixed]="loaderService.isLoading() ||
+        loaderService.isAuthenticating()"
       [class.not-fixed]="notFixed()"
-      [class.is-visible]="loaderService.isLoading() || loaderService.isLoadingMore()">
+      [class.small]="isSmall()"
+      [class.is-visible]="loaderService.isLoading() ||
+        loaderService.isLoadingMore() ||
+        loaderService.isAuthenticating()">
       <div class="pokeball">
         <div class="pokeball-content">
           <div class="pokeball-content-center">
@@ -24,4 +28,5 @@ import { LoaderService } from '../../../core/services/loader.service';
 export class PokeballLoaderComponent {
   protected readonly loaderService = inject(LoaderService);
   notFixed = input<boolean>(false);
+  isSmall = input<boolean>(false);
 }
