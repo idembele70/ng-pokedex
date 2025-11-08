@@ -38,7 +38,7 @@
       "placeholder": "Email",
       "error": {
         "invalid": "L'email n'est pas valide",
-        "exist": "",
+        "exist": "Ce email existe déjà",
         "required": "L'email est requis"
       }
     },

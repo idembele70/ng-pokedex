@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, Observable, switchMap, tap } from 'rxjs';
+import { catchError, Observable, of, switchMap, tap } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
@@ -21,7 +21,10 @@ export class AuthDialogService {
     return this.http.post<RegisterResponse>(`${this._BASE_URL}/register`, payload, {
       headers: this._headers,
     }).pipe(
-      switchMap(() => this.notificationService.notifySuccess(prefix)),
+      switchMap((resp) => {
+        this.notificationService.notifySuccess(prefix);
+        return of(resp);
+      }),
       tap(() => this.authService.toggleAuthMode()),
       catchError(() => this.notificationService.notifyError(prefix)),
     );
