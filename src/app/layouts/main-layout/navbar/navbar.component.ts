@@ -15,9 +15,9 @@ import { LoaderService } from '../../../core/services/loader.service';
     <header>
       <div class="login-btn-wrapper">
         <span role="button" class="login-btn"
-        (click)="authService.setAuthVisibility(true)">
-      {{ 'auth.button.login'  | translate }}
-      </span>
+          (click)="authService.setAuthVisibility(true)">
+          {{ 'auth.button.login'  | translate }}
+        </span>
       </div>
       <nav>
         <a class="btn"
@@ -25,7 +25,7 @@ import { LoaderService } from '../../../core/services/loader.service';
           routerLinkActive="active">{{ 'header.homePage' | translate }}</a>
         <a class="btn"
           routerLink="liked"
-            routerLinkActive="active">{{ 'header.likedPage' | translate }}</a>
+          routerLinkActive="active">{{ 'header.likedPage' | translate }}</a>
       </nav>
     </header>
 

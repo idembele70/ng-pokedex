@@ -18,7 +18,6 @@ import { passwordMatchValidator } from '../../validators/password-match.validato
   ],
   providers: [
     AuthDialogService,
-    PokeballLoaderComponent,
   ],
   template: `
       <form [formGroup]="authForm"
@@ -86,6 +85,7 @@ import { passwordMatchValidator } from '../../validators/password-match.validato
           }}</button>
           <span role="button"
             aria-label="toggle auth mode"
+            tabindex="0"
             (click)="toggleAuthMode()">
             {{
               'auth.button.prefix.or' | translate

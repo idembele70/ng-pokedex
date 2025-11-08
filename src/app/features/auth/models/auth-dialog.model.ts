@@ -1,6 +1,3 @@
-export interface Auth {
-}
-
 export interface authPayload {
   email: string;
   password: string;
