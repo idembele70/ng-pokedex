@@ -5,8 +5,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subscription, timer } from 'rxjs';
 import { DEFAULT_LANG, SUPPORTED_LANGS } from '../../config/i18n.config';
 import { LoaderService } from '../../core/services/loader.service';
+import { AuthDialogComponent } from '../../features/auth/components/auth-dialog/auth-dialog.component';
 import { PokemonsService } from '../../features/pokemons/services/pokemons.service';
 import { PokeballLoaderComponent } from '../../shared/components/pokeball-loader/pokeball-loader.component';
+import { AuthService } from './../../core/services/auth.service';
 import { NavbarComponent } from './navbar/navbar.component';
 import { ScrollTopButtonComponent } from './scroll-top-button/scroll-top-button.component';
 import { SearchBarComponent } from './search-bar/search-bar.component';
@@ -21,6 +23,7 @@ import { SearchBarComponent } from './search-bar/search-bar.component';
     PokeballLoaderComponent,
     SearchBarComponent,
     ScrollTopButtonComponent,
+    AuthDialogComponent,
   ],
 
   providers: [
@@ -36,6 +39,9 @@ import { SearchBarComponent } from './search-bar/search-bar.component';
         (deactivate)="loaderService.isLoading.set(true)" />
         <app-scroll-top-button />
       }
+      @if (authService.isAuthDialogVisible()) {
+        <app-auth-dialog />
+      }
   `,
   styles: ``
 })
@@ -43,6 +49,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   readonly loaderService = inject(LoaderService);
   private timerSub?: Subscription;
   private readonly translateService = inject(TranslateService);
+  protected readonly authService = inject(AuthService);
 
   constructor() {
     this.loadLang();

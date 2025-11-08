@@ -9,6 +9,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   template: `
     <form>
       <input
+        class="base-input"
         type="search"
         name="name"
         #name
@@ -17,6 +18,7 @@ import { TranslatePipe } from '@ngx-translate/core';
       />
       <div>
         <input
+          class="base-input"
           type="search"
           name="id"
           #id
@@ -24,6 +26,7 @@ import { TranslatePipe } from '@ngx-translate/core';
           [placeholder]="'searchBars.idInput.placeholder' | translate"
         />
         <input
+          class="base-input"
           type="search"
           name="type"
           #type

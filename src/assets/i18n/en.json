@@ -32,5 +32,42 @@
         }
       }
     }
+  },
+  "auth": {
+    "email": {
+      "placeholder": "Email",
+      "error": {
+        "invalid": "Invalid email address",
+        "exist": "Email already exists",
+        "required": "Email is required"
+      }
+    },
+    "password": {
+      "placeholder": "Password",
+      "error": {
+        "passwordsMisMatch": "Passwords do not match",
+        "minLength": "Password must be at least {{min}} characters long",
+        "required": "Password is required"
+      }
+    },
+    "confirmPassword": {
+      "placeholder": "Confirm password",
+      "error": {
+        "required": "Password confirmation is required"
+      }
+    },
+    "button": {
+      "login": "Log in",
+      "register": "Sign up",
+      "prefix": {
+        "or": "or"
+      }
+    },
+    "register": {
+      "messages": {
+        "error": "Failed to create account",
+        "success": "Account created successfully!"
+      }
+    }
   }
 }

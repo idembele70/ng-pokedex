@@ -13,6 +13,13 @@ export class NotificationService {
     private readonly translate: TranslateService,
   ) { }
 
+  notifySuccess(prefix: string): Observable<string> {
+    const suffix = '.messages.success';
+    return this.translate.get(`${prefix}${suffix}`).pipe(
+      tap((message) => this.toastr.success(message))
+    )
+  }
+
   notifyError(prefix: string): Observable<never> {
     const suffix = '.messages.error';
 
