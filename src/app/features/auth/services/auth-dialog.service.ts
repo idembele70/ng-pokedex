@@ -4,7 +4,7 @@ import { catchError, Observable, of, switchMap, tap } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
-import { authPayload, RegisterResponse } from '../models/auth-dialog.model';
+import { AuthPayload, RegisterResponse } from '../models/auth-dialog.model';
 
 @Injectable()
 export class AuthDialogService {
@@ -16,7 +16,7 @@ export class AuthDialogService {
     private readonly authService: AuthService,
   ) { }
 
-  register(payload: authPayload): Observable<RegisterResponse> {
+  register(payload: AuthPayload): Observable<RegisterResponse> {
     const prefix = 'auth.register';
     return this.http.post<RegisterResponse>(`${this._BASE_URL}/register`, payload, {
       headers: this._headers,
