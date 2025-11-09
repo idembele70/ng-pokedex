@@ -58,6 +58,7 @@
     },
     "button": {
       "login": "Log in",
+      "logout": "Log Out",
       "register": "Sign up",
       "prefix": {
         "or": "or"
@@ -67,6 +68,19 @@
       "messages": {
         "error": "Failed to create account",
         "success": "Account created successfully!"
+      }
+    },
+    "login": {
+      "messages": {
+        "error": "Login failed",
+        "success": "Successfully logged in"
+      }
+    },
+    "jwt": {
+      "refreshToken": {
+        "messages": {
+          "error": "Your session has expired. Please log in again"
+        }
       }
     }
   }

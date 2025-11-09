@@ -58,6 +58,7 @@
     },
     "button": {
       "login": "Se connecter",
+      "logout": "Se Déconnecter",
       "register": "S'inscrire",
       "prefix": {
         "or": "ou"
@@ -67,6 +68,19 @@
       "messages": {
         "error": "Le compte n'a pas pu être créé",
         "success": "Compte créé avec succès !"
+      }
+    },
+    "login": {
+      "messages": {
+        "error": "Échec de la connexion",
+        "success": "Connexion réussie"
+      }
+    },
+    "jwt": {
+      "refreshToken": {
+        "messages": {
+          "error": "Votre session a expiré. Veuillez vous reconnecter."
+        }
       }
     }
   }

@@ -1,7 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { catchError, finalize, tap } from 'rxjs';
-import { environment } from '../../../../environments/environment';
 import { LoaderService } from '../../../core/services/loader.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { Pokemon, PokemonPage } from '../models/pokemon.model';
@@ -9,7 +8,7 @@ import { Pokemon, PokemonPage } from '../models/pokemon.model';
 @Injectable()
 export class PokemonsService {
   private readonly httpClient = inject(HttpClient);
-  private readonly _API_URL = `${environment.API_URL}/pokemons/search`;
+  private readonly _BASE_PATHNAME = 'pokemons/search';
   private readonly _limitPerPage = signal(20);
   private readonly _currentPage = signal(1);
   private readonly _totalPages = signal(1);
@@ -41,7 +40,7 @@ export class PokemonsService {
 
   private fetchCurrentPage(): void {
     this.loaderService.setIsLoadingMore(true);
-    this.httpClient.get<PokemonPage>(this._API_URL, {
+    this.httpClient.get<PokemonPage>(this._BASE_PATHNAME, {
       params: this._params
     }).pipe(
       tap((res) => {

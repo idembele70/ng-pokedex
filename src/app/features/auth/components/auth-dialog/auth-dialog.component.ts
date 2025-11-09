@@ -1,7 +1,7 @@
 import { Component, ElementRef, HostBinding, inject, NgZone, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
-import { finalize, Subscription } from 'rxjs';
+import { finalize, pipe, Subscription } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth.service';
 import { LoaderService } from '../../../../core/services/loader.service';
 import { PokeballLoaderComponent } from '../../../../shared/components/pokeball-loader/pokeball-loader.component';
@@ -158,9 +158,6 @@ export class AuthDialogComponent implements OnInit, OnDestroy {
         ],
       ],
       confirmPassword: [''],
-    },
-    {
-      updateOn: 'blur',
     }
   );
 
@@ -192,18 +189,15 @@ export class AuthDialogComponent implements OnInit, OnDestroy {
     if (this.authForm.invalid) return;
 
     this.loaderService.setIsAuthenticating(true);
-    this.authForm.disable({ emitEvent: false })
+    this.authForm.disable({ emitEvent: false });
     this.authSubscription?.unsubscribe();
+    const { confirmPassword, ...authPayload } = this.authForm.getRawValue();
     if (this.authService.isRegisteredMode()) {
-      const { email, password } = this.authForm.getRawValue();
-      this.authSubscription = this.authDialogService.register({
-        email,
-        password,
-      })
-        .pipe(finalize(() => {
-          this.authForm.enable({ emitEvent: false })
-          this.loaderService.setIsAuthenticating(false);
-        })).subscribe(() => this.authForm.reset({}, { emitEvent: false }))
+      this.authSubscription = this.authDialogService.register(authPayload)
+        .pipe(this.finalizeAuth()).subscribe(this.resetForm);
+    } else {
+      this.authSubscription = this.authDialogService.login(authPayload)
+        .pipe(this.finalizeAuth()).subscribe(this.resetForm);
     }
   }
 
@@ -229,8 +223,21 @@ export class AuthDialogComponent implements OnInit, OnDestroy {
     })
   }
 
-  private cleanup() {
+  private cleanup(): void {
     this.unlistenContainerClick?.();
     this.authSubscription?.unsubscribe();
+  }
+
+  private finalizeAuth() {
+    return pipe(
+      finalize(() => {
+        this.authForm.enable({ emitEvent: false })
+        this.loaderService.setIsAuthenticating(false);
+      })
+    )
+  }
+
+  private resetForm(): () => void {
+    return () => this.authForm.reset({}, { emitEvent: false });
   }
 }

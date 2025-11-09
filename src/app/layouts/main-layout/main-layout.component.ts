@@ -53,6 +53,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
 
   constructor() {
     this.loadLang();
+    this.authService.initAuth();
   }
 
   ngOnInit(): void {
