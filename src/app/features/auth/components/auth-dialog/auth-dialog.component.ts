@@ -194,10 +194,10 @@ export class AuthDialogComponent implements OnInit, OnDestroy {
     const { confirmPassword, ...authPayload } = this.authForm.getRawValue();
     if (this.authService.isRegisteredMode()) {
       this.authSubscription = this.authDialogService.register(authPayload)
-        .pipe(this.finalizeAuth()).subscribe(this.resetForm);
+        .pipe(this.finalizeAuth()).subscribe(() => this.resetForm());
     } else {
       this.authSubscription = this.authDialogService.login(authPayload)
-        .pipe(this.finalizeAuth()).subscribe(this.resetForm);
+        .pipe(this.finalizeAuth()).subscribe(() => this.resetForm());
     }
   }
 
@@ -234,10 +234,10 @@ export class AuthDialogComponent implements OnInit, OnDestroy {
         this.authForm.enable({ emitEvent: false })
         this.loaderService.setIsAuthenticating(false);
       })
-    )
+    );
   }
 
-  private resetForm(): () => void {
-    return () => this.authForm.reset({}, { emitEvent: false });
+  private resetForm(): void {
+    this.authForm.reset({}, { emitEvent: false });
   }
 }

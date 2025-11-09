@@ -37,7 +37,7 @@ import { LoaderService } from '../../../core/services/loader.service';
           routerLink="liked"
           routerLinkActive="active">{{ 'header.likedPage' | translate }}</a>
           }
-          </nav>
+      </nav>
     </header>
 
   `,

@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { API_PATHS } from '../constants/api-paths';
 import { RefreshTokenResponse } from '../models/auth.model';
 import { JwtService } from './jwt.service';
 
@@ -10,7 +11,7 @@ import { JwtService } from './jwt.service';
 })
 export class RefreshTokenService {
   private readonly http = inject(HttpClient);
-  private readonly _API_URL = `${environment.API_URL}auth/refresh`;
+  private readonly _API_URL = `${environment.API_URL}${API_PATHS.AUTH.REFRESH_TOKEN}`;
   private readonly jwtService = inject(JwtService);
 
   refreshToken(): Observable<RefreshTokenResponse> {
