@@ -13,19 +13,30 @@ import { LoaderService } from '../../../core/services/loader.service';
   ],
   template: `
     <header>
-      <div class="login-btn-wrapper">
+      <div class="user-info-wrapper">
+          <h5
+            [style.visibility]="!authService.currentUser()
+              ? 'hidden'
+              : 'visible'">
+              {{ authService.currentUser()?.email}}
+          </h5>
         <span role="button" class="login-btn"
           (click)="authService.setAuthVisibility(true)">
-          {{ 'auth.button.login'  | translate }}
+          {{ 'auth.button.' + (authService.isLoggedIn()
+            ? 'logout'
+            : 'login')  | translate
+          }}
         </span>
       </div>
       <nav>
         <a class="btn"
           routerLink="home"
           routerLinkActive="active">{{ 'header.homePage' | translate }}</a>
-        <a class="btn"
+        @if (authService.isLoggedIn()) {
+          <a class="btn"
           routerLink="liked"
           routerLinkActive="active">{{ 'header.likedPage' | translate }}</a>
+          }
       </nav>
     </header>
 
@@ -40,18 +51,30 @@ import { LoaderService } from '../../../core/services/loader.service';
       flex-wrap: wrap;
     }
     
-    .login-btn-wrapper {
-      padding-top: 20px;
-      padding-right: 12px;
+    .user-info-wrapper {
+      padding: 12px 20px 0;
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+      @media (max-width: 250px) {
+        padding-right: 0;
+        justify-content: center;
+      }
+
+      h5 {
+        font-size: 14px;
+        font-weight: bold;
+        margin: 0;
+      }
     }
     
     .login-btn {
       text-transform: uppercase;
       font-size: 14px;
       font-weight: bold;
-      padding: 12px 30px;
       cursor: pointer;
       letter-spacing: 5px;
       @media (max-width: 250px) {

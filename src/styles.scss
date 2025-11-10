@@ -11,6 +11,7 @@ body {
 
 .btn {
   cursor: pointer;
+  max-width: 210px;
   text-decoration: none;
   font-size: 14px;
   line-height: 16px;
@@ -18,11 +19,16 @@ body {
   text-transform: uppercase;
   border-radius: 18px;
   background-color: rgb(255, 255, 255);
-  padding: 12px 12%;
+  padding: 12px 60px;
+  box-sizing: border-box;
   letter-spacing: 5px;
   color: #000;
   transition: 350ms linear;
   border: none;
+
+  @media (max-width: 250px) {
+    padding: 12px 24px;
+  }
 
   &:hover {
     background-color: #9E9E9E;
