@@ -58,7 +58,7 @@
     },
     "button": {
       "login": "Se connecter",
-      "logout": "Se Déconnecter",
+      "logout": "Se déconnecter",
       "register": "S'inscrire",
       "prefix": {
         "or": "ou"

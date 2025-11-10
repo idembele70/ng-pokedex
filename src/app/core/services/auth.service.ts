@@ -4,7 +4,7 @@ import { catchError, throwError } from 'rxjs';
 import { AuthMode, CurrentUser } from '../models/auth.model';
 import { JwtService } from './jwt.service';
 import { NotificationService } from './notification.service';
-import { API_PATHS } from '../constants/api-paths';
+import { API_PATHS_TOKEN } from '../config/api-paths.config';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +16,7 @@ export class AuthService {
   private readonly _currentUser = signal<CurrentUser | null>(null);
   private readonly jwtService = inject(JwtService);
   private readonly notificationService = inject(NotificationService);
+  private readonly apiPaths = inject(API_PATHS_TOKEN);
 
   readonly isRegisteredMode = computed(() => this._authMode() === 'register');
   readonly isAuthDialogVisible = computed(() => this._authDialogVisibility());
@@ -38,9 +39,9 @@ export class AuthService {
   initAuth(): void {
     if (!this.jwtService.getToken()) return;
 
-    this.http.get<CurrentUser>(API_PATHS.AUTH.ME).pipe(
+    this.http.get<CurrentUser>(this.apiPaths.AUTH.ME).pipe(
       catchError((err: HttpErrorResponse) => {
-        if (err.url?.endsWith(API_PATHS.AUTH.REFRESH_TOKEN)) {
+        if (err.url?.endsWith(this.apiPaths.AUTH.REFRESH_TOKEN)) {
           this.jwtService.destroyToken();
           this.setAuthVisibility(true);
           return this.notificationService.notifyError('auth.jwt.refreshToken');

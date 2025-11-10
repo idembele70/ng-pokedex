@@ -1,23 +1,20 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import { API_PATHS } from '../constants/api-paths';
+import { API_PATHS_TOKEN } from '../config/api-paths.config';
 import { RefreshTokenResponse } from '../models/auth.model';
 import { JwtService } from './jwt.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RefreshTokenService {
   private readonly http = inject(HttpClient);
-  private readonly _API_URL = `${environment.API_URL}${API_PATHS.AUTH.REFRESH_TOKEN}`;
+  private readonly apiPaths = inject(API_PATHS_TOKEN);
   private readonly jwtService = inject(JwtService);
 
   refreshToken(): Observable<RefreshTokenResponse> {
-    return this.http.get<RefreshTokenResponse>(this._API_URL, {
-      withCredentials: true,
-    }).pipe(
+    return this.http.get<RefreshTokenResponse>(this.apiPaths.AUTH.REFRESH_TOKEN).pipe(
       tap((accessToken) => {
         this.jwtService.saveToken(accessToken.accessToken);
       }),

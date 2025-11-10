@@ -3,7 +3,7 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription, timer } from 'rxjs';
-import { DEFAULT_LANG, SUPPORTED_LANGS } from '../../config/i18n.config';
+import { DEFAULT_LANG, SUPPORTED_LANGS } from '../../core/config/i18n.config';
 import { LoaderService } from '../../core/services/loader.service';
 import { AuthDialogComponent } from '../../features/auth/components/auth-dialog/auth-dialog.component';
 import { PokemonsService } from '../../features/pokemons/services/pokemons.service';

@@ -58,7 +58,7 @@
     },
     "button": {
       "login": "Log in",
-      "logout": "Log Out",
+      "logout": "Log out",
       "register": "Sign up",
       "prefix": {
         "or": "or"
