@@ -59,12 +59,12 @@ export class AuthService {
       ),
       catchError(() => {
         this.setAuthVisibility(true);
-        return this.notificationService.notifyError(prefix)
+        return this.notificationService.notifyError(prefix);
       }),
       finalize(() => {
         this.jwtService.destroyToken();
         this.setCurrentUser(null);
       })
-    ).subscribe()
+    ).subscribe();
   }
 }

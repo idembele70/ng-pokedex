@@ -99,7 +99,7 @@ export class NavbarComponent {
   protected readonly authService = inject(AuthService);
 
   toggleAuth() {
-    if(this.loaderService.isProcessing()) return;
+    if (this.loaderService.isProcessing()) return;
 
     this.loaderService.setIsLoading(true);
     if (this.authService.isLoggedIn()) {

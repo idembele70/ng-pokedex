@@ -11,8 +11,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     return next(req);
   }
   const refreshTokenService = inject(RefreshTokenService);
-  const jwtSevice = inject(JwtService);
-  const tokenReq = addTokenToHeader(req, jwtSevice.getToken());
+  const jwtService = inject(JwtService);
+  const tokenReq = addTokenToHeader(req, jwtService.getToken());
   const apiPaths = inject(API_PATHS_TOKEN);
 
   return next(tokenReq).pipe(

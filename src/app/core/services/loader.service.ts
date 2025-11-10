@@ -10,10 +10,10 @@ export class LoaderService {
 
   readonly isLoadingMore = computed(() => this._isLoadingMore());
   readonly isAuthenticating = computed(() => this._isAuthenticating());
-  readonly isLoading = computed(() => this._isLoading())
+  readonly isLoading = computed(() => this._isLoading());
   readonly isProcessing = computed(() => this._isLoadingMore() ||
     this._isAuthenticating() ||
-    this._isLoading())
+    this._isLoading());
   readonly DURATION = 500;
 
   setIsLoading(state: boolean): void {
