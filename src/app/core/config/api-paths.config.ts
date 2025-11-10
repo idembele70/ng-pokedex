@@ -6,6 +6,7 @@ const createAuthApiPaths = (basePathname: string) => {
     REGISTER: `${basePathname}/register`,
     ME: `${basePathname}/me`,
     REFRESH_TOKEN: `${basePathname}/refresh`,
+    LOGOUT: `${basePathname}/logout`,
   } as const;
 }
 

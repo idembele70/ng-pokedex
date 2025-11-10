@@ -21,7 +21,9 @@ import { LoaderService } from '../../../core/services/loader.service';
               {{ authService.currentUser()?.email}}
           </h5>
         <span role="button" class="login-btn"
-          (click)="authService.setAuthVisibility(true)">
+          [ariaDisabled]="loaderService.isProcessing()"
+          [class.disabled]="loaderService.isProcessing()"
+          (click)="toggleAuth()">
           {{ 'auth.button.' + (authService.isLoggedIn()
             ? 'logout'
             : 'login')  | translate
@@ -30,10 +32,14 @@ import { LoaderService } from '../../../core/services/loader.service';
       </div>
       <nav>
         <a class="btn"
+          [class.disabled]="loaderService.isProcessing()"
+          [ariaDisabled]="loaderService.isProcessing()"
           routerLink="home"
           routerLinkActive="active">{{ 'header.homePage' | translate }}</a>
         @if (authService.isLoggedIn()) {
           <a class="btn"
+            [class.disabled]="loaderService.isProcessing()"
+            [ariaDisabled]="loaderService.isProcessing()"
           routerLink="liked"
           routerLinkActive="active">{{ 'header.likedPage' | translate }}</a>
           }
@@ -50,7 +56,7 @@ import { LoaderService } from '../../../core/services/loader.service';
       margin-bottom: 30px;
       flex-wrap: wrap;
     }
-    
+
     .user-info-wrapper {
       padding: 12px 20px 0;
       display: flex;
@@ -70,7 +76,12 @@ import { LoaderService } from '../../../core/services/loader.service';
         margin: 0;
       }
     }
-    
+
+    .disabled {
+      pointer-events: none;
+      opacity: .5;
+    }
+
     .login-btn {
       text-transform: uppercase;
       font-size: 14px;
@@ -86,4 +97,18 @@ import { LoaderService } from '../../../core/services/loader.service';
 export class NavbarComponent {
   protected readonly loaderService = inject(LoaderService);
   protected readonly authService = inject(AuthService);
+
+  toggleAuth() {
+    if(this.loaderService.isProcessing()) return;
+
+    this.loaderService.setIsLoading(true);
+    if (this.authService.isLoggedIn()) {
+      this.authService.logout();
+      this.loaderService.setIsLoading(false);
+    }
+    else {
+      this.authService.setAuthVisibility(true);
+      this.loaderService.setIsLoading(false);
+    }
+  }
 }

@@ -36,7 +36,7 @@ import { SearchBarComponent } from './search-bar/search-bar.component';
       } @else {
         <app-search-bar />
         <router-outlet (activate)="hideLoader()"
-        (deactivate)="loaderService.isLoading.set(true)" />
+        (deactivate)="loaderService.setIsLoading(true)" />
         <app-scroll-top-button />
       }
       @if (authService.isAuthDialogVisible()) {
@@ -69,7 +69,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     this.timerSub = timer(this.loaderService.DURATION)
       .subscribe(
         {
-          next: () => this.loaderService.isLoading.set(false),
+          next: () => this.loaderService.setIsLoading(false),
         }
       );
   }

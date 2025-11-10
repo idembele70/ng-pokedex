@@ -76,6 +76,12 @@
         "success": "Connexion réussie"
       }
     },
+    "logout": {
+      "messages": {
+        "error": "Échec de la déconnexion",
+        "success": "Déconnexion réussie"
+      }
+    },
     "jwt": {
       "refreshToken": {
         "messages": {

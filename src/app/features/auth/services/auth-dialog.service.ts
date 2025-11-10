@@ -23,7 +23,6 @@ export class AuthDialogService {
       headers: this._headers,
     }).pipe(
       switchMap((resp) => {
-        this.authService.toggleAuthMode();
         return this.notificationService.notifySuccess(prefix).pipe(
           map(() => resp),
         );

@@ -76,6 +76,12 @@
         "success": "Successfully logged in"
       }
     },
+    "logout": {
+      "messages": {
+        "error": "Logout failed",
+        "success": "Successfully logged out"
+      }
+    },
     "jwt": {
       "refreshToken": {
         "messages": {
