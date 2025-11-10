@@ -9,7 +9,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const refreshTokenService = inject(RefreshTokenService);
   const token = inject(JwtService).getToken();
   const tokenReq = addTokenToHeader(req, token);
-  const apiPaths = inject(API_PATHS_TOKEN)
+  const apiPaths = inject(API_PATHS_TOKEN);
 
   return next(tokenReq).pipe(
     catchError((err: HttpErrorResponse) => {
@@ -24,9 +24,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           })
         )
       } else {
-        return throwError(() => err)
+        return throwError(() => err);
       }
-    })
+    }),
   );
 };
 
