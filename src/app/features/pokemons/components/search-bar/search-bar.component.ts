@@ -1,9 +1,10 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
-import { debounceTime, distinctUntilChanged, finalize, tap } from 'rxjs';
-import { PokemonsService } from '../../services/pokemons.service';
+import { debounceTime, distinctUntilChanged, tap } from 'rxjs';
 import { LoaderService } from '../../../../core/services/loader.service';
+import { PokemonsService } from '../../services/pokemons.service';
 @Component({
   selector: 'app-search-bar',
   standalone: true,
@@ -48,6 +49,7 @@ export class SearchBarComponent implements OnInit {
   protected readonly nameInput = new FormControl('');
   private readonly pokemonsService = inject(PokemonsService);
   private readonly loaderService = inject(LoaderService);
+  private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
     this.nameInput?.valueChanges
@@ -55,6 +57,7 @@ export class SearchBarComponent implements OnInit {
         debounceTime(this.DEBOUNCE_TIME),
         distinctUntilChanged(),
         tap(() => this.loaderService.setIsSearching(true)),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(
         v => {

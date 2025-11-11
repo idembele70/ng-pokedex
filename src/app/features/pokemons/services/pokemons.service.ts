@@ -15,6 +15,7 @@ export class PokemonsService {
   private readonly _totalPages = signal(1);
   private readonly _currentPokemons = signal<Pokemon[]>([]);
   private readonly _pokemonFilters = signal<PokemonFilter | null>(null);
+  private readonly FILTER_DELAY = 100;
 
   readonly currentPokemons = computed(() => this._currentPokemons());
   readonly isLastPage = computed(() => this._currentPage() >= this._totalPages());
@@ -50,11 +51,10 @@ export class PokemonsService {
   }
 
   filterPokemon(): void {
-    const requestDelayDueTime = 100;
     this.httpClient.get<PokemonPage>(this.pokemonApiPaths.SEARCH, {
       params: this._params,
     }).pipe(
-      delay(requestDelayDueTime),
+      delay(this.FILTER_DELAY),
       tap((res) => {
         this._currentPokemons.set(res.pokemons);
         this._currentPage.set(res.currentPage);
