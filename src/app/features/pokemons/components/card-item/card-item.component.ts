@@ -1,5 +1,5 @@
 import { NgOptimizedImage } from '@angular/common';
-import { Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding, input, OnInit, output } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Pokemon } from '../../models/pokemon.model';
 import { TypeColorPipe } from './../../pipes/type-color.pipe';
@@ -7,6 +7,7 @@ import { TypeColorPipe } from './../../pipes/type-color.pipe';
 @Component({
   selector: 'app-card-item',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TypeColorPipe,
     TranslatePipe,
@@ -167,8 +168,16 @@ import { TypeColorPipe } from './../../pipes/type-color.pipe';
     }
   `
 })
-export class CardItemComponent {
+export class CardItemComponent implements OnInit {
   pokemon = input.required<Pokemon>();
   isFavorite = input<boolean>(false);
   toggleFavorite = output<Pokemon>();
+
+  @HostBinding('style.opacity')
+  protected opacity = 0;
+  ngOnInit(): void {
+    setTimeout(() => {
+      this.opacity = 1;
+    });
+  }
 }

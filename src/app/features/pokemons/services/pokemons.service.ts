@@ -3,12 +3,13 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { catchError, delay, finalize, tap } from 'rxjs';
 import { LoaderService } from '../../../core/services/loader.service';
 import { NotificationService } from '../../../core/services/notification.service';
+import { POKEMON_API_PATHS_TOKEN } from '../config/pokemons-api-paths.config';
 import { Pokemon, PokemonFilter, PokemonFilterKeys, PokemonPage } from '../models/pokemon.model';
 
 @Injectable()
 export class PokemonsService {
   private readonly httpClient = inject(HttpClient);
-  private readonly _BASE_PATHNAME = 'pokemons/search';
+  private readonly pokemonApiPaths = inject(POKEMON_API_PATHS_TOKEN);
   private readonly _limitPerPage = signal(20);
   private readonly _currentPage = signal(1);
   private readonly _totalPages = signal(1);
@@ -50,7 +51,7 @@ export class PokemonsService {
 
   filterPokemon(): void {
     const requestDelayDueTime = 100;
-    this.httpClient.get<PokemonPage>(this._BASE_PATHNAME, {
+    this.httpClient.get<PokemonPage>(this.pokemonApiPaths.SEARCH, {
       params: this._params,
     }).pipe(
       delay(requestDelayDueTime),
@@ -66,7 +67,7 @@ export class PokemonsService {
 
   private fetchCurrentPage(): void {
     this.loaderService.setIsLoadingMore(true);
-    this.httpClient.get<PokemonPage>(this._BASE_PATHNAME, {
+    this.httpClient.get<PokemonPage>(this.pokemonApiPaths.SEARCH, {
       params: this._params
     }).pipe(
       tap((res) => {

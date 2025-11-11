@@ -6,12 +6,9 @@ import { Subscription, timer } from 'rxjs';
 import { DEFAULT_LANG, SUPPORTED_LANGS } from '../../core/config/i18n.config';
 import { LoaderService } from '../../core/services/loader.service';
 import { AuthDialogComponent } from '../../features/auth/components/auth-dialog/auth-dialog.component';
-import { PokemonsService } from '../../features/pokemons/services/pokemons.service';
 import { PokeballLoaderComponent } from '../../shared/components/pokeball-loader/pokeball-loader.component';
 import { AuthService } from './../../core/services/auth.service';
 import { NavbarComponent } from './navbar/navbar.component';
-import { ScrollTopButtonComponent } from './scroll-top-button/scroll-top-button.component';
-import { SearchBarComponent } from '../../features/pokemons/components/search-bar/search-bar.component';
 
 @Component({
   selector: 'app-main-layout',
@@ -21,23 +18,18 @@ import { SearchBarComponent } from '../../features/pokemons/components/search-ba
     RouterOutlet,
     NavbarComponent,
     PokeballLoaderComponent,
-    SearchBarComponent,
-    ScrollTopButtonComponent,
     AuthDialogComponent,
   ],
-
   providers: [
-    PokemonsService,
+ 
   ],
   template: `
     <app-navbar />
       @if (loaderService.isLoading()) {
         <pokeball-loader />
       } @else {
-        <app-search-bar />
         <router-outlet (activate)="hideLoader()"
         (deactivate)="loaderService.setIsLoading(true)" />
-        <app-scroll-top-button />
       }
       @if (authService.isAuthDialogVisible()) {
         <app-auth-dialog />
@@ -63,6 +55,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     this.cleanUpTimerSubscription();
   }
 
+  
   hideLoader() {
     this.cleanUpTimerSubscription();
 
