@@ -82,10 +82,13 @@ export class PokemonsService {
     const params: Record<string, string> = {
       page: this._currentPage().toString(),
       limit: this._limitPerPage().toString(),
-    }
+    };
 
     for (const [key, value] of Object.entries(this._pokemonFilters())) {
-      if (value)
+      if (
+        value !== undefined &&
+        value !== null
+      )
         params[key] = value;
     }
     return new HttpParams({ fromObject: params });

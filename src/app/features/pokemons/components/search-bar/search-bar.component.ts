@@ -2,7 +2,7 @@ import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
-import { debounceTime, distinctUntilChanged, tap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, distinctUntilKeyChanged, tap } from 'rxjs';
 import { LoaderService } from '../../../../core/services/loader.service';
 import { PokemonFilter, PokemonFilterKeys } from '../../models/pokemon.model';
 import { PokemonsService } from '../../services/pokemons.service';
@@ -61,7 +61,8 @@ export class SearchBarComponent implements OnInit {
     this.searchForm.valueChanges
       .pipe(
         debounceTime(this.DEBOUNCE_TIME),
-        distinctUntilChanged(),
+        distinctUntilChanged((prev, curr) => JSON.stringify(prev) ===
+          JSON.stringify(curr)),
         tap(() => this.loaderService.setIsSearching(true)),
         takeUntilDestroyed(this.destroyRef),
       )
@@ -73,15 +74,15 @@ export class SearchBarComponent implements OnInit {
   }
 
   private sanitizeUserInput(values: PokemonFilter): void {
-    const lettersRegex = /[^a-zA-Z]/g 
+    const lettersRegex = /[^a-zA-Z]/g;
     const sanitizedValues = {
       name: values.name?.replaceAll(lettersRegex, '') ?? '',
       id: values.id?.replaceAll(/\D/g, '') ?? '',
-      type: values.type?.replaceAll(lettersRegex, '') ?? '',  
+      type: values.type?.replaceAll(lettersRegex, '') ?? '',
     };
     const currentValues = this.searchForm.value;
     const hasInvalidInput = Object.keys(sanitizedValues).some(
-      key => sanitizedValues[key as PokemonFilterKeys] !== 
+      key => sanitizedValues[key as PokemonFilterKeys] !==
         currentValues[key as PokemonFilterKeys]
     );
 
@@ -91,10 +92,10 @@ export class SearchBarComponent implements OnInit {
       emitEvent: false,
     });
 
-    if(hasInvalidInput) {
+    if (hasInvalidInput) {
       this.loaderService.setIsSearching(false);
       return;
     }
-      this.pokemonsService.filterPokemon();
+    this.pokemonsService.filterPokemon();
   }
 }
