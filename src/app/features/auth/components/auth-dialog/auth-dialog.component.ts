@@ -1,3 +1,4 @@
+import { CdkTrapFocus } from '@angular/cdk/a11y';
 import { Component, ElementRef, HostBinding, inject, NgZone, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -15,12 +16,15 @@ import { passwordMatchValidator } from '../../validators/password-match.validato
     TranslatePipe,
     ReactiveFormsModule,
     PokeballLoaderComponent,
+    CdkTrapFocus,
   ],
   providers: [
     AuthDialogService,
   ],
   template: `
       <form [formGroup]="authForm"
+        cdkTrapFocus
+        [cdkTrapFocusAutoCapture]="true"
         (ngSubmit)="onSubmit()"
         class="auth-wrapper">
           <pokeball-loader [isSmall]="true" />
@@ -34,9 +38,9 @@ import { passwordMatchValidator } from '../../validators/password-match.validato
             formControlName="email"
             name="email" />
             @if (authForm.get('email'); as emailControl) {
-              @if (emailControl.dirty && emailControl.hasError('required')) {
+              @if (emailControl.touched && emailControl.hasError('required')) {
                 <span class="error">{{ 'auth.email.error.required' | translate}}</span>
-              } @else if (emailControl.touched && emailControl.hasError('email')) {
+              } @else if (emailControl.dirty && emailControl.hasError('email')) {
                 <span class="error">{{ 'auth.email.error.invalid' | translate}}</span>
               }
             }
@@ -142,6 +146,7 @@ export class AuthDialogComponent implements OnInit, OnDestroy {
   private readonly authDialogService = inject(AuthDialogService);
   readonly loaderService = inject(LoaderService);
   private unlistenContainerClick?: () => void;
+  private unlistenWindowKeyUp?: () => void;
   private authSubscription?: Subscription;
   readonly authService = inject(AuthService);
   readonly PASSWORD_MIN_LENGTH = 8;
@@ -206,7 +211,7 @@ export class AuthDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.listenContainerClick();
+    this.setup();
   }
 
   ngOnDestroy(): void {
@@ -227,9 +232,32 @@ export class AuthDialogComponent implements OnInit, OnDestroy {
     })
   }
 
+  private listenWindowKeyup(): void {
+    this.ngZone.runOutsideAngular(() => {
+      this.unlistenWindowKeyUp = this.renderer.listen(
+        'window', 'keyup', (event: KeyboardEvent) => {
+          const closeDialogKeyList = ['escape', 'q'];
+
+          if (
+            !closeDialogKeyList.includes(event.key.toLowerCase()) ||
+            (event.target instanceof HTMLInputElement) ||
+            this.loaderService.isProcessing()
+          ) return;
+          this.ngZone.run(() => this.authService.setAuthVisibility(false));
+        }
+      )
+    })
+  }
+
+  private setup() {
+    this.listenContainerClick();
+    this.listenWindowKeyup();
+  }
+
   private cleanup(): void {
     this.unlistenContainerClick?.();
     this.authSubscription?.unsubscribe();
+    this.unlistenWindowKeyUp?.();
   }
 
   private finalizeAuth() {
