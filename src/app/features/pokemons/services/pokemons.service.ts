@@ -14,7 +14,7 @@ export class PokemonsService {
   private readonly _currentPage = signal(1);
   private readonly _totalPages = signal(1);
   private readonly _currentPokemons = signal<Pokemon[]>([]);
-  private readonly _pokemonFilters = signal<PokemonFilter | null>(null);
+  private readonly _pokemonFilters = signal<PokemonFilter>({});
   private readonly FILTER_DELAY = 100;
 
   readonly currentPokemons = computed(() => this._currentPokemons());
@@ -44,10 +44,8 @@ export class PokemonsService {
     }
   }
 
-  setPokemonFilters(name: PokemonFilterKeys, value: string): void {
-    this._pokemonFilters.update(
-      previousFilter => ({ ...previousFilter, [name]: value })
-    );
+  setPokemonFilters(newFilters: PokemonFilter): void {
+    this._pokemonFilters.set(newFilters);
   }
 
   filterPokemon(): void {
@@ -81,10 +79,16 @@ export class PokemonsService {
   }
 
   private get _params(): HttpParams {
-    return new HttpParams()
-      .set('page', this._currentPage())
-      .set('limit', this._limitPerPage())
-      .set('name', this._pokemonFilters()?.name ?? '');
+    const params: Record<string, string> = {
+      page: this._currentPage().toString(),
+      limit: this._limitPerPage().toString(),
+    }
+
+    for (const [key, value] of Object.entries(this._pokemonFilters())) {
+      if (value)
+        params[key] = value;
+    }
+    return new HttpParams({ fromObject: params });
   }
 
   private get _isFilterEmpty(): boolean {
