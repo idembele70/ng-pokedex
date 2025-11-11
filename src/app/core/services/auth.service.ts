@@ -1,10 +1,10 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { catchError, throwError } from 'rxjs';
+import { catchError, finalize, map, switchMap, throwError } from 'rxjs';
+import { API_PATHS_TOKEN } from '../config/api-paths.config';
 import { AuthMode, CurrentUser } from '../models/auth.model';
 import { JwtService } from './jwt.service';
 import { NotificationService } from './notification.service';
-import { API_PATHS_TOKEN } from '../config/api-paths.config';
 
 @Injectable({
   providedIn: 'root'
@@ -32,7 +32,7 @@ export class AuthService {
     this._authDialogVisibility.set(state);
   }
 
-  setCurrentUser(user: CurrentUser): void {
+  setCurrentUser(user: CurrentUser | null): void {
     this._currentUser.set(user);
   }
 
@@ -42,13 +42,29 @@ export class AuthService {
     this.http.get<CurrentUser>(this.apiPaths.AUTH.ME).pipe(
       catchError((err: HttpErrorResponse) => {
         if (err.url?.endsWith(this.apiPaths.AUTH.REFRESH_TOKEN)) {
-          this.jwtService.destroyToken();
-          this.setAuthVisibility(true);
+          this.logout();
           return this.notificationService.notifyError('auth.jwt.refreshToken');
         }
         return throwError(() => err);
       }),
     )
-      .subscribe((user) => this._currentUser.set(user));
+      .subscribe((user) => this.setCurrentUser(user));
+  }
+
+  logout(): void {
+    const prefix = 'auth.logout';
+    this.http.get<{ message: string }>(this.apiPaths.AUTH.LOGOUT).pipe(
+      switchMap((resp) => this.notificationService.notifySuccess(prefix)
+        .pipe(map(() => resp)),
+      ),
+      catchError(() => {
+        this.setAuthVisibility(true);
+        return this.notificationService.notifyError(prefix);
+      }),
+      finalize(() => {
+        this.jwtService.destroyToken();
+        this.setCurrentUser(null);
+      })
+    ).subscribe();
   }
 }

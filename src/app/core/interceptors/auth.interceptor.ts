@@ -4,11 +4,15 @@ import { catchError, switchMap, throwError } from 'rxjs';
 import { API_PATHS_TOKEN } from '../config/api-paths.config';
 import { JwtService } from '../services/jwt.service';
 import { RefreshTokenService } from '../services/refresh-token.service';
+import { HttpUtilities } from '../utilities/http.utilities';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  if (HttpUtilities.isExcluded(req.url)) {
+    return next(req);
+  }
   const refreshTokenService = inject(RefreshTokenService);
-  const token = inject(JwtService).getToken();
-  const tokenReq = addTokenToHeader(req, token);
+  const jwtService = inject(JwtService);
+  const tokenReq = addTokenToHeader(req, jwtService.getToken());
   const apiPaths = inject(API_PATHS_TOKEN);
 
   return next(tokenReq).pipe(

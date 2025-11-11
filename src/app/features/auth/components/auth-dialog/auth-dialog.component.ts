@@ -29,6 +29,7 @@ import { passwordMatchValidator } from '../../validators/password-match.validato
             class="base-input"
             autocomplete="off"
             [placeholder]="'auth.email.placeholder' | translate"
+            [attr.aria-disabled]="loaderService.isAuthenticating()"
             type="email"
             formControlName="email"
             name="email" />
@@ -46,6 +47,7 @@ import { passwordMatchValidator } from '../../validators/password-match.validato
             autocomplete="off"
             type="password"
             [placeholder]="'auth.password.placeholder' | translate"
+            [attr.aria-disabled]="loaderService.isAuthenticating()"
             formControlName="password"
             name="password" />
             @if (authForm.get('password'); as passwordControl) {
@@ -68,6 +70,7 @@ import { passwordMatchValidator } from '../../validators/password-match.validato
               class="base-input"
               autocomplete="off"
               [placeholder]="'auth.confirmPassword.placeholder' | translate"
+              [attr.aria-disabled]="loaderService.isAuthenticating()"
               type="password"
               formControlName="confirmPassword"
               name="confirmPassword" />
@@ -79,6 +82,7 @@ import { passwordMatchValidator } from '../../validators/password-match.validato
           </div>
         }
         <button class="btn" 
+          [attr.aria-disabled]="authForm.invalid || authForm.disabled"
           [disabled]="authForm.invalid || authForm.disabled"
           type="submit">{{ 'auth.button.' + 
             (authService.isRegisteredMode() ?  'register' : 'login') | translate
@@ -231,6 +235,8 @@ export class AuthDialogComponent implements OnInit, OnDestroy {
   private finalizeAuth() {
     return pipe(
       finalize(() => {
+        if (this.authService.isRegisteredMode())
+          this.toggleAuthMode();
         this.authForm.enable({ emitEvent: false });
         this.loaderService.setIsAuthenticating(false);
       })

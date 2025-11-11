@@ -8,14 +8,14 @@ export class JwtService {
   constructor() { }
 
   getToken(): string | null {
-    return localStorage.getItem(this._storageKey);
+    return sessionStorage.getItem(this._storageKey);
   }
 
   saveToken(token: string): void {
-    localStorage.setItem(this._storageKey, token);
+    sessionStorage.setItem(this._storageKey, token);
   }
 
   destroyToken(): void {
-    localStorage.removeItem(this._storageKey);
+    sessionStorage.removeItem(this._storageKey);
   }
 }

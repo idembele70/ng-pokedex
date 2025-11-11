@@ -1,10 +1,10 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { HttpUtilities } from '../utilities/http.utilities';
 
-const EXCLUDED_PATHS = ['assets/']; 
 
 export const apiInterceptor: HttpInterceptorFn = (req, next) => {
-  if (EXCLUDED_PATHS.some(path => req.url.includes(path))) {
+  if (HttpUtilities.isExcluded(req.url)) {
     return next(req);
   }
 
