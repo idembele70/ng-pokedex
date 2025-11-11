@@ -5,10 +5,15 @@ export interface Pokemon {
   img: string;
   type: string[];
 }
-
 export interface PokemonPage {
   pokemons: Pokemon[];
   currentPage: number;
   totalPages: number;
   totalItems: number;
 }
+
+export interface PokemonFilter {
+  name?: string;
+}
+
+export type PokemonFilterKeys = keyof PokemonFilter;

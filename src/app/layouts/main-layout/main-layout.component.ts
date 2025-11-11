@@ -11,7 +11,7 @@ import { PokeballLoaderComponent } from '../../shared/components/pokeball-loader
 import { AuthService } from './../../core/services/auth.service';
 import { NavbarComponent } from './navbar/navbar.component';
 import { ScrollTopButtonComponent } from './scroll-top-button/scroll-top-button.component';
-import { SearchBarComponent } from './search-bar/search-bar.component';
+import { SearchBarComponent } from '../../features/pokemons/components/search-bar/search-bar.component';
 
 @Component({
   selector: 'app-main-layout',

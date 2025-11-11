@@ -1,9 +1,9 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { catchError, finalize, tap } from 'rxjs';
+import { catchError, delay, finalize, tap } from 'rxjs';
 import { LoaderService } from '../../../core/services/loader.service';
 import { NotificationService } from '../../../core/services/notification.service';
-import { Pokemon, PokemonPage } from '../models/pokemon.model';
+import { Pokemon, PokemonFilter, PokemonFilterKeys, PokemonPage } from '../models/pokemon.model';
 
 @Injectable()
 export class PokemonsService {
@@ -13,10 +13,20 @@ export class PokemonsService {
   private readonly _currentPage = signal(1);
   private readonly _totalPages = signal(1);
   private readonly _currentPokemons = signal<Pokemon[]>([]);
+  private readonly _pokemonFilters = signal<PokemonFilter | null>(null);
 
   readonly currentPokemons = computed(() => this._currentPokemons());
   readonly isLastPage = computed(() => this._currentPage() >= this._totalPages());
   readonly limitPerPage = computed(() => this._limitPerPage());
+  readonly isFiltering = computed(() =>
+    this._currentPokemons().length === 0 &&
+    !this._isFilterEmpty
+  );
+  readonly isCurrentPokemonsEmpty = computed(() =>
+    this._isFilterEmpty &&
+    this._currentPokemons().length === 0
+  );
+
 
   constructor(
     private readonly loaderService: LoaderService,
@@ -25,17 +35,33 @@ export class PokemonsService {
     this.fetchCurrentPage();
   }
 
-  loadMorePokemons():void {
+  loadMorePokemons(): void {
     if (!this.isLastPage()) {
       this._currentPage.update(prev => prev + 1);
       this.fetchCurrentPage();
     }
   }
 
-  private get _params(): HttpParams {
-    return new HttpParams()
-      .set('page', this._currentPage())
-      .set('limit', this._limitPerPage());
+  setPokemonFilters(name: PokemonFilterKeys, value: string): void {
+    this._pokemonFilters.update(
+      previousFilter => ({ ...previousFilter, [name]: value })
+    );
+  }
+
+  filterPokemon(): void {
+    const requestDelayDueTime = 100;
+    this.httpClient.get<PokemonPage>(this._BASE_PATHNAME, {
+      params: this._params,
+    }).pipe(
+      delay(requestDelayDueTime),
+      tap((res) => {
+        this._currentPokemons.set(res.pokemons);
+        this._currentPage.set(res.currentPage);
+        this._totalPages.set(res.totalPages);
+      }),
+      catchError(() => this.notificationService.notifyError('pokemons.notification.search')),
+      finalize(() => this.loaderService.setIsSearching(false)),
+    ).subscribe();
   }
 
   private fetchCurrentPage(): void {
@@ -51,5 +77,16 @@ export class PokemonsService {
       catchError(() => this.notificationService.notifyError('pokemons.notification.fetchCurrentPage')),
       finalize(() => this.loaderService.setIsLoadingMore(false)),
     ).subscribe();
+  }
+
+  private get _params(): HttpParams {
+    return new HttpParams()
+      .set('page', this._currentPage())
+      .set('limit', this._limitPerPage())
+      .set('name', this._pokemonFilters()?.name ?? '');
+  }
+
+  private get _isFilterEmpty(): boolean {
+    return Object.values(this._pokemonFilters() ?? {}).every(v => !v);
   }
 }

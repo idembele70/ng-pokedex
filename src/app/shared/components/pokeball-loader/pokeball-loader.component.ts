@@ -11,9 +11,7 @@ import { LoaderService } from '../../../core/services/loader.service';
         loaderService.isAuthenticating()"
       [class.not-fixed]="notFixed()"
       [class.small]="isSmall()"
-      [class.is-visible]="loaderService.isLoading() ||
-        loaderService.isLoadingMore() ||
-        loaderService.isAuthenticating()">
+      [class.is-visible]="loaderService.isProcessing()">
       <div class="pokeball">
         <div class="pokeball-content">
           <div class="pokeball-content-center">

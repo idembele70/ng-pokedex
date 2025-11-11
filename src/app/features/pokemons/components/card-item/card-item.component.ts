@@ -19,7 +19,6 @@ import { TypeColorPipe } from './../../pipes/type-color.pipe';
           [alt]="pokemon().name"
           width="100"
           height="100"
-          [priority]="priority()"
           (error)="pokemon().img = 'assets/images/error-404.png'"
           />
       </div>
@@ -172,5 +171,4 @@ export class CardItemComponent {
   pokemon = input.required<Pokemon>();
   isFavorite = input<boolean>(false);
   toggleFavorite = output<Pokemon>();
-  priority = input<boolean>(false);
 }
