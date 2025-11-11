@@ -28,10 +28,16 @@
     "notification": {
       "fetchCurrentPage": {
         "messages": {
-          "error": "Impossible de récupérer les pokémons. Veuillez réessayer plus tard."
+          "error": "Impossible de récupérer les pokémons. Veuillez réessayer plus tard"
+        }
+      },
+      "search": {
+        "messages": {
+          "error": "Impossible de rechercher les pokémons"
         }
       }
-    }
+    },
+    "noResults": "Aucun pokémon trouvé"
   },
   "auth": {
     "email": {

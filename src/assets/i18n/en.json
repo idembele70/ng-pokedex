@@ -30,8 +30,14 @@
         "messages": {
           "error": "Unable to retrieve the pokemons. Please try again later"
         }
+      },
+      "search": {
+        "messages": {
+          "error": "Unable to search for pokemons"
+        }
       }
-    }
+    },
+    "noResults": "No Pokémon found"
   },
   "auth": {
     "email": {

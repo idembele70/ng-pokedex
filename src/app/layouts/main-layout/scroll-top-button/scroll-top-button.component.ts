@@ -1,10 +1,9 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, Inject, NgZone, OnDestroy, OnInit, Renderer2, signal } from '@angular/core';
+import { Component, Inject, input, NgZone, OnDestroy, OnInit, output, Renderer2, signal } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Subscription, timer } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { LoaderService } from '../../../core/services/loader.service';
-import { PokemonsService } from '../../../features/pokemons/services/pokemons.service';
 
 @Component({
   selector: 'app-scroll-top-button',
@@ -65,15 +64,15 @@ export class ScrollTopButtonComponent implements OnInit, OnDestroy {
   private timerSub?: Subscription;
   private readonly SCROLL_TO_TOP_DELAY = 500;
   private readonly SCROLL_THRESHOLD = 130;
-
   readonly isHidden = signal<boolean>(true);
+  isLastPage = input<boolean>(false);
+  triggerServiceLoadMorePokemons = output<void>();
 
   constructor(
     private readonly renderer: Renderer2,
     private readonly ngZone: NgZone,
     @Inject(DOCUMENT) private readonly document: Document,
     private readonly loaderService: LoaderService,
-    private readonly pokemonsService: PokemonsService,
     private readonly authService: AuthService,
   ) { }
 
@@ -130,7 +129,7 @@ export class ScrollTopButtonComponent implements OnInit, OnDestroy {
 
     if (
       scrollPosition + this.SCROLL_THRESHOLD >= scrollMaxHeight &&
-      !this.pokemonsService.isLastPage() &&
+      !this.isLastPage() &&
       !this.loaderService.isLoadingMore() &&
       !this.authService.isAuthDialogVisible()
     ) {
@@ -138,7 +137,7 @@ export class ScrollTopButtonComponent implements OnInit, OnDestroy {
       this.ngZone.run(() => {
         this.loaderService.setIsLoadingMore(true);
         this.timerSub = timer(this.loaderService.DURATION).subscribe(
-          () => this.pokemonsService.loadMorePokemons());
+          () => this.triggerServiceLoadMorePokemons.emit());
       });
     }
   }

@@ -1,9 +1,11 @@
 import { Component, inject } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { LoaderService } from '../../../../core/services/loader.service';
 import { PokeballLoaderComponent } from '../../../../shared/components/pokeball-loader/pokeball-loader.component';
 import { CardItemComponent } from '../../components/card-item/card-item.component';
 import { PokemonsService } from '../../services/pokemons.service';
-import { TranslatePipe } from '@ngx-translate/core';
+import { SearchBarComponent } from "../../components/search-bar/search-bar.component";
+import { ScrollTopButtonComponent } from "../../../../layouts/main-layout/scroll-top-button/scroll-top-button.component";
 
 @Component({
   selector: 'app-pokedex',
@@ -12,18 +14,38 @@ import { TranslatePipe } from '@ngx-translate/core';
     CardItemComponent,
     PokeballLoaderComponent,
     TranslatePipe,
+    SearchBarComponent,
+    ScrollTopButtonComponent
   ],
   template: `
-  @for (pokemon of pokemonsService.currentPokemons(); track pokemon._id) {
-    <app-card-item [pokemon]="pokemon" [priority]="$index <= pokemonsService.limitPerPage()" />
+  <app-search-bar />
+  @if (loaderService.isSearching() ||
+    loaderService.isLoadingMore() &&
+    pokemonsService.isCurrentPokemonsEmpty()
+    ) {
+    <pokeball-loader [notFixed]="true" />
+  } @else {
+    @for (pokemon of pokemonsService.currentPokemons(); track pokemon._id) {
+      <app-card-item [pokemon]="pokemon" />
+    }
   }
-  @if(pokemonsService.currentPokemons().length === 0 &&
-    !loaderService.isLoadingMore()) {
+  @if(pokemonsService.isFiltering() && !loaderService.isProcessing()) {
+    <h2>{{ 'pokemons.noResults' | translate}}</h2>
+  } 
+  @if(pokemonsService.isCurrentPokemonsEmpty() && !loaderService.isProcessing()) {
     <h2>{{ 'pokemons.emptyList' | translate}}</h2>
   }
-  <pokeball-loader
-    [notFixed]="true"
-    [hidden]="loaderService.isLoadingMore()" />
+
+  @if(!loaderService.isSearching() &&
+    loaderService.isLoadingMore() &&
+    !pokemonsService.isCurrentPokemonsEmpty()
+    ) {
+    <pokeball-loader
+      [notFixed]="true"
+      [hidden]="loaderService.isLoadingMore()" />
+  }
+  <app-scroll-top-button [isLastPage]="pokemonsService.isLastPage()"
+    (triggerServiceLoadMorePokemons)="pokemonsService.loadMorePokemons()" />
   `,
   styles: `
   :host {
@@ -41,4 +63,8 @@ import { TranslatePipe } from '@ngx-translate/core';
 export class PokedexComponent {
   protected readonly pokemonsService = inject(PokemonsService);
   protected readonly loaderService = inject(LoaderService);
+
+  ngOnInit(): void {
+    this.loaderService.setIsLoadingMore(true);
+  }
 }
