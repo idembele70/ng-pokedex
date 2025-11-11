@@ -1,1 +1,1 @@
-export const EXCLUDED_PATHS = ['assets/']; 
+export const EXCLUDED_PATHS = ['assets/'];

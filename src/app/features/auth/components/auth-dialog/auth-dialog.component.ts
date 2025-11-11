@@ -235,7 +235,8 @@ export class AuthDialogComponent implements OnInit, OnDestroy {
   private finalizeAuth() {
     return pipe(
       finalize(() => {
-        this.toggleAuthMode();
+        if (this.authService.isRegisteredMode())
+          this.toggleAuthMode();
         this.authForm.enable({ emitEvent: false });
         this.loaderService.setIsAuthenticating(false);
       })

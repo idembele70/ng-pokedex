@@ -1,4 +1,4 @@
-import { EXCLUDED_PATHS } from "../constants/http.constants";
+import { EXCLUDED_PATHS } from '../constants/http.constants';
 
 export class HttpUtilities {
   static isExcluded(url: string): boolean {
