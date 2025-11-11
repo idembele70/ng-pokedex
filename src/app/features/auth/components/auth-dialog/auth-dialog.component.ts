@@ -241,7 +241,7 @@ export class AuthDialogComponent implements OnInit, OnDestroy {
           if (
             !closeDialogKeyList.includes(event.key.toLowerCase()) ||
             (event.target instanceof HTMLInputElement) ||
-            this.loaderService.isProcessing()
+            this.loaderService.isAuthenticating()
           ) return;
           this.ngZone.run(() => this.authService.setAuthVisibility(false));
         }
