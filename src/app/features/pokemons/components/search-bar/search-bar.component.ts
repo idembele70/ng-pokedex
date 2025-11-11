@@ -1,9 +1,10 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
-import { debounceTime, distinctUntilChanged, tap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, distinctUntilKeyChanged, tap } from 'rxjs';
 import { LoaderService } from '../../../../core/services/loader.service';
+import { PokemonFilter, PokemonFilterKeys } from '../../models/pokemon.model';
 import { PokemonsService } from '../../services/pokemons.service';
 @Component({
   selector: 'app-search-bar',
@@ -13,31 +14,31 @@ import { PokemonsService } from '../../services/pokemons.service';
     ReactiveFormsModule,
   ],
   template: `
-    <form>
+    <form [formGroup]="searchForm">
       <input
         class="base-input"
         type="search"
         name="name"
         autocomplete="off"
         [placeholder]="'searchBars.nameInput.placeholder' | translate"
-        [formControl]="nameInput"
+        formControlName="name"
       />
       <div>
         <input
           class="base-input"
           type="search"
           name="id"
-          #id
           autocomplete="off"
           [placeholder]="'searchBars.idInput.placeholder' | translate"
+          formControlName="id"
         />
         <input
           class="base-input"
           type="search"
           name="type"
-          #type
           autocomplete="off"
           [placeholder]="'searchBars.typeInput.placeholder' | translate"
+          formControlName="type"
         />
       </div>
     </form>
@@ -46,25 +47,55 @@ import { PokemonsService } from '../../services/pokemons.service';
 })
 export class SearchBarComponent implements OnInit {
   private readonly DEBOUNCE_TIME = 250;
-  protected readonly nameInput = new FormControl('');
+  private readonly fb = inject(FormBuilder);
+  protected readonly searchForm = this.fb.nonNullable.group({
+    name: [''],
+    id: [''],
+    type: [''],
+  });
   private readonly pokemonsService = inject(PokemonsService);
   private readonly loaderService = inject(LoaderService);
   private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
-    this.nameInput?.valueChanges
+    this.searchForm.valueChanges
       .pipe(
         debounceTime(this.DEBOUNCE_TIME),
-        distinctUntilChanged(),
+        distinctUntilChanged((prev, curr) => JSON.stringify(prev) ===
+          JSON.stringify(curr)),
         tap(() => this.loaderService.setIsSearching(true)),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(
-        v => {
-          this.pokemonsService.setPokemonFilters('name', v ?? '');
-          this.pokemonsService.filterPokemon();
+        values => {
+          this.sanitizeUserInput(values);
         }
       )
   }
 
+  private sanitizeUserInput(values: PokemonFilter): void {
+    const lettersRegex = /[^a-zA-Z]/g;
+    const sanitizedValues = {
+      name: values.name?.replaceAll(lettersRegex, '') ?? '',
+      id: values.id?.replaceAll(/\D/g, '') ?? '',
+      type: values.type?.replaceAll(lettersRegex, '') ?? '',
+    };
+    const currentValues = this.searchForm.value;
+    const hasInvalidInput = Object.keys(sanitizedValues).some(
+      key => sanitizedValues[key as PokemonFilterKeys] !==
+        currentValues[key as PokemonFilterKeys]
+    );
+
+    this.pokemonsService.setPokemonFilters(sanitizedValues);
+
+    this.searchForm.setValue(sanitizedValues, {
+      emitEvent: false,
+    });
+
+    if (hasInvalidInput) {
+      this.loaderService.setIsSearching(false);
+      return;
+    }
+    this.pokemonsService.filterPokemon();
+  }
 }

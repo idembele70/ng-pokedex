@@ -14,6 +14,8 @@ export interface PokemonPage {
 
 export interface PokemonFilter {
   name?: string;
+  id?: string;
+  type?: string;
 }
 
 export type PokemonFilterKeys = keyof PokemonFilter;
