@@ -4,6 +4,7 @@ export interface Pokemon {
   name: string;
   img: string;
   type: string[];
+  likeCount: number;
 }
 export interface PokemonPage {
   pokemons: Pokemon[];

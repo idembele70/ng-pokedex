@@ -22,6 +22,12 @@
       "favoriteBtn": {
         "add": "Ajouter ce Pokémon aux favoris",
         "remove": "Enlever ce Pokémon des favoris"
+      },
+      "like": {
+        "empty": "Aucun j'aime",
+        "single": "j'aime",
+        "multiple": "mentions j'aime",
+        "title": "Nombre de j'aime"
       }
     },
     "emptyList": "Aucun Pokémon à afficher pour le moment",

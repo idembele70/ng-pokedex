@@ -64,8 +64,12 @@ export class PokemonsService {
   }
 
   private fetchCurrentPage(): void {
+    const url = this.isFiltering()
+      ? this.pokemonApiPaths.SEARCH
+      : this.pokemonApiPaths.GET_ALL;
+    
     this.loaderService.setIsLoadingMore(true);
-    this.httpClient.get<PokemonPage>(this.pokemonApiPaths.SEARCH, {
+    this.httpClient.get<PokemonPage>(url, {
       params: this._params
     }).pipe(
       tap((res) => {
