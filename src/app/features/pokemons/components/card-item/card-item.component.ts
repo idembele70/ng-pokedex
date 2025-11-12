@@ -19,7 +19,7 @@ import { TypeColorPipe } from './../../pipes/type-color.pipe';
         @if (!isLoggedIn()) {
           <span [title]="'pokemons.card.like.title' | translate"
             class="like-wrapper">{{ (pokemon().likeCount || '') +
-              ('pokemons.card.like.' + (pokemon().likeCount| i18nPlural: likeMapping)) | translate }}</span>
+              ('pokemons.card.like.' + (pokemon().likeCount | i18nPlural: likeMapping)) | translate }}</span>
         }
         <img
           [ngSrc]="pokemon().img"

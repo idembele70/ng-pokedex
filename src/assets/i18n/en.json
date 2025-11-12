@@ -24,7 +24,7 @@
         "remove": "Remove this Pokemon from favorites"
       },
       "like": {
-        "empty": "No like",
+        "empty": "No likes",
         "single": "like",
         "multiple": "likes",
         "title": "Likes count"
