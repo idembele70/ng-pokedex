@@ -20,7 +20,7 @@ export class AuthService {
 
   readonly isRegisteredMode = computed(() => this._authMode() === 'register');
   readonly isAuthDialogVisible = computed(() => this._authDialogVisibility());
-  readonly isLoggedIn = computed(() => !!this._currentUser());
+  readonly isLoggedIn = computed(() => this._currentUser() !== null);
   readonly currentUser = computed(() => this._currentUser());
 
   toggleAuthMode(): void {

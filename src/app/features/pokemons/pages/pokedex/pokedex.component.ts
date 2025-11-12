@@ -6,6 +6,7 @@ import { CardItemComponent } from '../../components/card-item/card-item.componen
 import { PokemonsService } from '../../services/pokemons.service';
 import { SearchBarComponent } from "../../components/search-bar/search-bar.component";
 import { ScrollTopButtonComponent } from "../../../../layouts/main-layout/scroll-top-button/scroll-top-button.component";
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-pokedex',
@@ -26,7 +27,7 @@ import { ScrollTopButtonComponent } from "../../../../layouts/main-layout/scroll
     <pokeball-loader [notFixed]="true" />
   } @else {
     @for (pokemon of pokemonsService.currentPokemons(); track pokemon._id) {
-      <app-card-item [pokemon]="pokemon" />
+      <app-card-item [pokemon]="pokemon" [isLoggedIn]="authService.isLoggedIn()" />
     }
   }
   @if(pokemonsService.isFiltering() && !loaderService.isProcessing()) {
@@ -63,6 +64,7 @@ import { ScrollTopButtonComponent } from "../../../../layouts/main-layout/scroll
 export class PokedexComponent {
   protected readonly pokemonsService = inject(PokemonsService);
   protected readonly loaderService = inject(LoaderService);
+  protected readonly authService = inject(AuthService);
 
   ngOnInit(): void {
     this.loaderService.setIsLoadingMore(true);
