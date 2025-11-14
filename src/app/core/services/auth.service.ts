@@ -5,6 +5,7 @@ import { API_PATHS_TOKEN } from '../config/api-paths.config';
 import { AuthMode, CurrentUser } from '../models/auth.model';
 import { JwtService } from './jwt.service';
 import { NotificationService } from './notification.service';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +23,7 @@ export class AuthService {
   readonly isAuthDialogVisible = computed(() => this._authDialogVisibility());
   readonly isLoggedIn = computed(() => this._currentUser() !== null);
   readonly currentUser = computed(() => this._currentUser());
+  readonly isLoggedIn$ = toObservable(this.isLoggedIn);
 
   toggleAuthMode(): void {
     this._authMode.update(prev => prev === 'login' ? 'register' : 'login');

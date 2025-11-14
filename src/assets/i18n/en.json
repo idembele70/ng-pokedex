@@ -41,6 +41,18 @@
         "messages": {
           "error": "Unable to search for pokemons"
         }
+      },
+      "like": {
+        "messages": {
+          "error": "Unable to add this Pokémon to your favorites. Please try again",
+          "success": "Pokémon added to your favorites"
+        }
+      },
+      "dislike": {
+        "messages": {
+          "error": "Unable to remove this Pokémon from your favorites. Please try again",
+          "success": "Pokemon removed from your favorites"
+        }
       }
     },
     "noResults": "No Pokémon found"

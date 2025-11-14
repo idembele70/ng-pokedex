@@ -1,12 +1,14 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
+import { AuthService } from '../../../../core/services/auth.service';
 import { LoaderService } from '../../../../core/services/loader.service';
+import { ScrollTopButtonComponent } from "../../../../layouts/main-layout/scroll-top-button/scroll-top-button.component";
 import { PokeballLoaderComponent } from '../../../../shared/components/pokeball-loader/pokeball-loader.component';
 import { CardItemComponent } from '../../components/card-item/card-item.component';
-import { PokemonsService } from '../../services/pokemons.service';
 import { SearchBarComponent } from "../../components/search-bar/search-bar.component";
-import { ScrollTopButtonComponent } from "../../../../layouts/main-layout/scroll-top-button/scroll-top-button.component";
-import { AuthService } from '../../../../core/services/auth.service';
+import { PokemonLikeService } from '../../services/pokemon-like.service';
+import { PokemonsService } from '../../services/pokemons.service';
+import { IsLikedPipe } from '../../pipes/is-liked.pipe';
 
 @Component({
   selector: 'app-pokedex',
@@ -16,7 +18,8 @@ import { AuthService } from '../../../../core/services/auth.service';
     PokeballLoaderComponent,
     TranslatePipe,
     SearchBarComponent,
-    ScrollTopButtonComponent
+    ScrollTopButtonComponent,
+    IsLikedPipe,
   ],
   template: `
   <app-search-bar />
@@ -27,7 +30,10 @@ import { AuthService } from '../../../../core/services/auth.service';
     <pokeball-loader [notFixed]="true" />
   } @else {
     @for (pokemon of pokemonsService.currentPokemons(); track pokemon._id) {
-      <app-card-item [pokemon]="pokemon" [isLoggedIn]="authService.isLoggedIn()" />
+      <app-card-item [pokemon]="pokemon"
+        (toggleFavorite)="pokemonLikeService.toggleLike($event)"
+        [isFavorite]="pokemonLikeService.likedIds() | isLiked:pokemon['_id']"
+        [isLoggedIn]="authService.isLoggedIn()" />
     }
   }
   @if(pokemonsService.isFiltering() && !loaderService.isProcessing()) {
@@ -61,10 +67,11 @@ import { AuthService } from '../../../../core/services/auth.service';
   }
   `
 })
-export class PokedexComponent {
+export class PokedexComponent implements OnInit {
   protected readonly pokemonsService = inject(PokemonsService);
   protected readonly loaderService = inject(LoaderService);
   protected readonly authService = inject(AuthService);
+  protected readonly pokemonLikeService = inject(PokemonLikeService);
 
   ngOnInit(): void {
     this.loaderService.setIsLoadingMore(true);

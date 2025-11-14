@@ -7,6 +7,6 @@ import { Component } from '@angular/core';
   templateUrl: './liked.component.html',
   styleUrl: './liked.component.scss'
 })
-export class LikedComponent {
-
+export class LikedComponent { 
+  
 }
