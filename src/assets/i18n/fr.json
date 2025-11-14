@@ -41,6 +41,18 @@
         "messages": {
           "error": "Impossible de rechercher les pokémons"
         }
+      },
+      "like": {
+        "messages": {
+          "error": "Impossible d'ajouter à vos favoris. Veuillez réessayer",
+          "success": "Pokemon ajouté à vos favoris"
+        }
+      },
+      "dislike": {
+        "messages": {
+          "error": "Impossible de retirer de vos favoris. Veuillez réessayer",
+          "success": "Pokemon retiré de vos favoris"
+        }
       }
     },
     "noResults": "Aucun pokémon trouvé"

@@ -18,8 +18,10 @@ import { TypeColorPipe } from './../../pipes/type-color.pipe';
       <div class="img-wrapper">
         @if (!isLoggedIn()) {
           <span [title]="'pokemons.card.like.title' | translate"
-            class="like-wrapper">{{ (pokemon().likeCount || '') +
-              ('pokemons.card.like.' + (pokemon().likeCount | i18nPlural: likeMapping)) | translate }}</span>
+            class="like-wrapper">{{ 
+              (pokemon().likeCount || '') +
+              (pokemon().likeCount ? ' ' : '') +
+              (('pokemons.card.like.' + (pokemon().likeCount | i18nPlural: likeMapping)) | translate) }}</span>
         }
         <img
           [ngSrc]="pokemon().img"
@@ -45,7 +47,8 @@ import { TypeColorPipe } from './../../pipes/type-color.pipe';
       </div>
       @if (isLoggedIn()) {
         <div role="button"
-          (click)="toggleFavorite.emit(pokemon())"
+          (click)="toggleFavorite.emit(pokemon()['_id'])"
+          tabindex="0"
           class="thumb-up-wrapper"
           [class.favorite]="isFavorite()"
           [title]="('pokemons.card.favoriteBtn.' +
@@ -189,7 +192,7 @@ export class CardItemComponent implements OnInit {
   pokemon = input.required<Pokemon>();
   isFavorite = input<boolean>(false);
   isLoggedIn = input<boolean>(false);
-  toggleFavorite = output<Pokemon>();
+  toggleFavorite = output<Pokemon['_id']>();
   likeMapping: Record<string, string> = {
     '=0': 'empty',
     '=1': 'single',
