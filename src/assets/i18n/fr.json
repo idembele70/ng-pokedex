@@ -50,7 +50,7 @@
       },
       "dislike": {
         "messages": {
-          "error": "Impossible retirer de vos favoris. Veuillez réessayer",
+          "error": "Impossible de retirer de vos favoris. Veuillez réessayer",
           "success": "Pokemon retiré de vos favoris"
         }
       }

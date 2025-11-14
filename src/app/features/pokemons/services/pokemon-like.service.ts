@@ -5,6 +5,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { POKEMON_API_PATHS_TOKEN } from '../config/pokemons-api-paths.config';
 import { Pokemon } from '../models/pokemon.model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Injectable({
   providedIn: null,
@@ -23,7 +24,7 @@ export class PokemonLikeService {
       (isLogged) => {
         if (isLogged) this.getAllLike();
       }
-    )
+    );
   }
 
   toggleLike(pokemonId: Pokemon['_id']): void {
@@ -38,6 +39,7 @@ export class PokemonLikeService {
     this.http.get<Array<Pokemon['_id']>>(this.apiPathsUrl.LIKE).pipe(
       tap((ids) => this._likedIds.set(new Set(ids))),
       catchError(() => this.notificationService.notifyError('pokemons.getAllLike')),
+      takeUntilDestroyed(),
     ).subscribe();
   }
 
@@ -56,21 +58,21 @@ export class PokemonLikeService {
       catchError(() => this.notificationService.notifyError(prefix)),
       switchMap(() => this.notificationService.notifySuccess(prefix)),
       tap(() => this.removeFromLikedIds(pokemonId)),
-    ).subscribe()
+    ).subscribe();
   }
 
   private addToLikedIds(id: Pokemon['_id']): void {
     this._likedIds.update(prev => {
       const next = new Set(prev);
       next.add(id);
-      return next
+      return next;
     })
   }
   private removeFromLikedIds(id: Pokemon['_id']): void {
     this._likedIds.update(prev => {
       const next = new Set(prev);
       next.delete(id);
-      return next
+      return next;
     })
   }
 }

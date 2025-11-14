@@ -6,6 +6,7 @@ import { LoaderService } from '../../../core/services/loader.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { POKEMON_API_PATHS_TOKEN } from '../config/pokemons-api-paths.config';
 import { Pokemon, PokemonFilter, PokemonPage } from '../models/pokemon.model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Injectable()
 export class PokemonsService {
@@ -36,11 +37,14 @@ export class PokemonsService {
     private readonly notificationService: NotificationService,
     private readonly authService: AuthService,
   ) {
-    this.authService.isLoggedIn$.subscribe(() => {
-      this._currentPokemons.set([]);
-      this._currentPage.set(1);
-      this.fetchCurrentPage();
-    });
+    this.authService.isLoggedIn$.pipe(
+      tap(() => {
+        this._currentPokemons.set([]);
+        this._currentPage.set(1);
+        this.fetchCurrentPage();
+      }),
+      takeUntilDestroyed(),
+    ).subscribe();
   }
 
   loadMorePokemons(): void {
