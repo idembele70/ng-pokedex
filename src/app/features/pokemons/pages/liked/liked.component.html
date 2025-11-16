@@ -1,1 +1,8 @@
-<p>liked works!</p>
+@for (pokemon of pokemonsService.currentPokemons(); track pokemon._id) {
+  <app-card-item [pokemon]="pokemon"
+    (toggleFavorite)="pokemonLikeService.toggleLike($event)"
+    [isFavorite]="pokemonLikeService.likedIds() | isLiked:pokemon['_id']"
+    [isLoggedIn]="authService.isLoggedIn()" />
+}
+<app-scroll-top-button [isLastPage]="pokemonsService.isLastPage()"
+  (triggerServiceLoadMorePokemons)="pokemonsService.loadMoreLikedPokemons()" />

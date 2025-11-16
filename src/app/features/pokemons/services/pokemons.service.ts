@@ -1,12 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { catchError, delay, finalize, tap } from 'rxjs';
-import { AuthService } from '../../../core/services/auth.service';
 import { LoaderService } from '../../../core/services/loader.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { POKEMON_API_PATHS_TOKEN } from '../config/pokemons-api-paths.config';
 import { Pokemon, PokemonFilter, PokemonPage } from '../models/pokemon.model';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Injectable()
 export class PokemonsService {
@@ -35,17 +33,7 @@ export class PokemonsService {
   constructor(
     private readonly loaderService: LoaderService,
     private readonly notificationService: NotificationService,
-    private readonly authService: AuthService,
-  ) {
-    this.authService.isLoggedIn$.pipe(
-      tap(() => {
-        this._currentPokemons.set([]);
-        this._currentPage.set(1);
-        this.fetchCurrentPage();
-      }),
-      takeUntilDestroyed(),
-    ).subscribe();
-  }
+  ) {}
 
   loadMorePokemons(): void {
     if (!this.isLastPage()) {
@@ -73,7 +61,29 @@ export class PokemonsService {
     ).subscribe();
   }
 
-  private fetchCurrentPage(): void {
+  loadMoreLikedPokemons(): void {
+    if (!this.isLastPage()) {
+      this._currentPage.update(prev => prev + 1);
+      this.fetchLikedPokemons();
+    }
+  }
+
+  fetchLikedPokemons(): void {
+    this.loaderService.setIsLoadingMore(true);
+    this.httpClient.get<PokemonPage>(this.pokemonApiPaths.GET_USER_LIKED, {
+      params: this._params,
+    }).pipe(
+      catchError(() => this.notificationService.notifyError('pokemons.notification.getUserLiked')),
+      tap((res) => {
+        this._currentPokemons.update(prev => [...prev, ...res.pokemons]);
+        this._currentPage.set(res.currentPage);
+        this._totalPages.set(res.totalPages);
+      }),
+      finalize(() => this.loaderService.setIsLoadingMore(false)),
+    ).subscribe();
+  }
+
+  fetchCurrentPage(): void {
     const url = this._isFilterEmpty
       ? this.pokemonApiPaths.GET_ALL
       : this.pokemonApiPaths.SEARCH;
@@ -90,6 +100,14 @@ export class PokemonsService {
       catchError(() => this.notificationService.notifyError('pokemons.notification.fetchCurrentPage')),
       finalize(() => this.loaderService.setIsLoadingMore(false)),
     ).subscribe();
+  }
+
+  resetState() {
+    this._currentPokemons.set([]);
+    this._currentPage.set(1);
+    this._totalPages.set(1);
+    this._limitPerPage.set(20);
+    this._pokemonFilters.set({});
   }
 
   private get _params(): HttpParams {

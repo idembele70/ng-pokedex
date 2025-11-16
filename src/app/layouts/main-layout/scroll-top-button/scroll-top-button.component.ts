@@ -15,7 +15,7 @@ import { LoaderService } from '../../../core/services/loader.service';
   <button [title]="'scrollTopButton.title' | translate"
   [attr.aria-hidden]="isHidden()"
   [attr.focusable]="!isHidden()"
-  [hidden]="isHidden()"
+  [hidden]="isHidden() || loaderService.isLoadingMore()"
   (click)="scrollToTop($event)"
   >
     <svg color="white"
@@ -72,7 +72,7 @@ export class ScrollTopButtonComponent implements OnInit, OnDestroy {
     private readonly renderer: Renderer2,
     private readonly ngZone: NgZone,
     @Inject(DOCUMENT) private readonly document: Document,
-    private readonly loaderService: LoaderService,
+    protected readonly loaderService: LoaderService,
     private readonly authService: AuthService,
   ) { }
 
