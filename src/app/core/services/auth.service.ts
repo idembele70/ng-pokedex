@@ -6,6 +6,7 @@ import { AuthMode, CurrentUser } from '../models/auth.model';
 import { JwtService } from './jwt.service';
 import { NotificationService } from './notification.service';
 import { toObservable } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,7 @@ export class AuthService {
   private readonly jwtService = inject(JwtService);
   private readonly notificationService = inject(NotificationService);
   private readonly apiPaths = inject(API_PATHS_TOKEN);
+  private readonly router = inject(Router);
 
   readonly isRegisteredMode = computed(() => this._authMode() === 'register');
   readonly isAuthDialogVisible = computed(() => this._authDialogVisibility());
@@ -66,6 +68,7 @@ export class AuthService {
       finalize(() => {
         this.jwtService.destroyToken();
         this.setCurrentUser(null);
+        this.router.navigate(['home']);
       })
     ).subscribe();
   }

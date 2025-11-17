@@ -6,6 +6,8 @@ import { Subscription, timer } from 'rxjs';
 import { DEFAULT_LANG, SUPPORTED_LANGS } from '../../core/config/i18n.config';
 import { LoaderService } from '../../core/services/loader.service';
 import { AuthDialogComponent } from '../../features/auth/components/auth-dialog/auth-dialog.component';
+import { POKEMON_API_PATHS, POKEMON_API_PATHS_TOKEN } from '../../features/pokemons/config/pokemons-api-paths.config';
+import { PokemonsService } from '../../features/pokemons/services/pokemons.service';
 import { PokeballLoaderComponent } from '../../shared/components/pokeball-loader/pokeball-loader.component';
 import { AuthService } from './../../core/services/auth.service';
 import { NavbarComponent } from './navbar/navbar.component';
@@ -21,7 +23,11 @@ import { NavbarComponent } from './navbar/navbar.component';
     AuthDialogComponent,
   ],
   providers: [
- 
+    PokemonsService,
+    {
+      provide: POKEMON_API_PATHS_TOKEN,
+      useValue: POKEMON_API_PATHS,
+    },
   ],
   template: `
     <app-navbar />
@@ -30,6 +36,11 @@ import { NavbarComponent } from './navbar/navbar.component';
       } @else {
         <router-outlet (activate)="hideLoader()"
         (deactivate)="loaderService.setIsLoading(true)" />
+      }
+      @if(!loaderService.isSearching() &&
+        !loaderService.isLoading() &&
+        !pokemonsService.isCurrentPokemonsEmpty()) { 
+        <pokeball-loader [notFixed]="true" />
       }
       @if (authService.isAuthDialogVisible()) {
         <app-auth-dialog />
@@ -42,6 +53,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   private timerSub?: Subscription;
   private readonly translateService = inject(TranslateService);
   protected readonly authService = inject(AuthService);
+  protected readonly pokemonsService = inject(PokemonsService);
 
   constructor() {
     this.loadLang();
@@ -55,7 +67,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     this.cleanUpTimerSubscription();
   }
 
-  
+
   hideLoader() {
     this.cleanUpTimerSubscription();
 
