@@ -53,7 +53,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   private timerSub?: Subscription;
   private readonly translateService = inject(TranslateService);
   protected readonly authService = inject(AuthService);
-  protected readonly pokemonsService = inject(PokemonsService)
+  protected readonly pokemonsService = inject(PokemonsService);
 
   constructor() {
     this.loadLang();
