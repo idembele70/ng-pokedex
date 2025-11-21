@@ -6,7 +6,9 @@
     "start": "ng serve --ssl --ssl-cert ./ssl/localhost.crt --ssl-key ./ssl/localhost.key",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "predocker:run": "docker rm -f ng-pokedex && docker build --no-cache -t ng-pokedex .",
+    "docker:run": "docker run -d -p 8443:443 --name ng-pokedex ng-pokedex:latest"
   },
   "private": true,
   "dependencies": {
