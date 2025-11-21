@@ -102,12 +102,16 @@ export class PokemonsService {
     ).subscribe();
   }
 
-  resetState() {
+  resetState(): void {
     this._currentPokemons.set([]);
     this._currentPage.set(1);
     this._totalPages.set(1);
     this._limitPerPage.set(20);
     this._pokemonFilters.set({});
+  }
+
+  setLimitPerPage(limit: number): void {
+    this._limitPerPage.set(limit);
   }
 
   private get _params(): HttpParams {

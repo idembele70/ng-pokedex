@@ -8,6 +8,7 @@ export class LoaderService {
   private readonly _isAuthenticating = signal<boolean>(false);
   private readonly _isLoading = signal<boolean>(true);
   private readonly _isSearching = signal<boolean>(false);
+  private readonly _isTogglingLike = signal<boolean>(false);
 
   readonly isLoadingMore = computed(() => this._isLoadingMore());
   readonly isAuthenticating = computed(() => this._isAuthenticating());
@@ -15,7 +16,8 @@ export class LoaderService {
   readonly isProcessing = computed(() => this._isLoadingMore() ||
     this._isAuthenticating() ||
     this._isLoading() ||
-    this._isSearching()
+    this._isSearching() ||
+    this._isTogglingLike()
   );
   readonly isSearching = computed(() => this._isSearching());
   readonly DURATION = 500;
@@ -34,5 +36,9 @@ export class LoaderService {
 
   setIsSearching(state: boolean): void {
     this._isSearching.set(state);
+  }
+
+  setIsTogglingLike(state: boolean): void {
+    this._isTogglingLike.set(state);
   }
 }

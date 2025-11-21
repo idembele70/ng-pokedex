@@ -32,7 +32,8 @@ import { PokemonsService } from '../../services/pokemons.service';
       <app-card-item [pokemon]="pokemon"
         (toggleFavorite)="pokemonLikeService.toggleLike($event)"
         [isFavorite]="pokemonLikeService.likedIds() | isLiked:pokemon['_id']"
-        [isLoggedIn]="authService.isLoggedIn()" />
+        [isLoggedIn]="authService.isLoggedIn()" 
+        [isProcessing]="loaderService.isProcessing()" />
     }
   }
   @if(pokemonsService.isFiltering() && !loaderService.isProcessing()) {

@@ -1,8 +1,17 @@
-@for (pokemon of pokemonsService.currentPokemons(); track pokemon._id) {
-  <app-card-item [pokemon]="pokemon"
-    (toggleFavorite)="pokemonLikeService.toggleLike($event)"
-    [isFavorite]="pokemonLikeService.likedIds() | isLiked:pokemon['_id']"
-    [isLoggedIn]="authService.isLoggedIn()" />
-}
-<app-scroll-top-button [isLastPage]="pokemonsService.isLastPage()"
+@if(
+  pokemonsService.currentPokemons().length === pokemonLikeService.dislikedIds().size &&
+  !loaderService.isProcessing()) {
+  <h2>{{ 'pokemons.emptyLikeList' | translate }}</h2>
+} @else {
+    @for (pokemon of pokemonsService.currentPokemons(); track pokemon._id) {
+      <app-card-item [pokemon]="pokemon"
+      (toggleFavorite)="pokemonLikeService.toggleLike($event)"
+      [isFavorite]="pokemonLikeService.likedIds() | isLiked:pokemon['_id']"
+      [isLoggedIn]="authService.isLoggedIn()"
+      [isDisliked]="pokemon._id | isDisliked:pokemonLikeService.dislikedIds()"
+      [isProcessing]="loaderService.isProcessing()"
+      />
+  }
+  <app-scroll-top-button [isLastPage]="pokemonsService.isLastPage()"
   (triggerServiceLoadMorePokemons)="pokemonsService.loadMoreLikedPokemons()" />
+}
