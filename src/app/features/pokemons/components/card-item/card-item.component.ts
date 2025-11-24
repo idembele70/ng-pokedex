@@ -1,5 +1,5 @@
 import { I18nPluralPipe, NgOptimizedImage } from '@angular/common';
-import { ChangeDetectionStrategy, Component, HostBinding, input, OnInit, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, HostBinding, input, OnDestroy, OnInit, output } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Pokemon } from '../../models/pokemon.model';
 import { TypeColorPipe } from './../../pipes/type-color.pipe';
@@ -47,8 +47,10 @@ import { TypeColorPipe } from './../../pipes/type-color.pipe';
       </div>
       @if (isLoggedIn()) {
         <div role="button"
-          (click)="toggleFavorite.emit(pokemon()['_id'])"
+          (click)="toggleFavorite.emit(this.pokemon()['_id'])"
           tabindex="0"
+          [attr.aria-disabled]="isProcessing() || isDisliked()"
+          [style.pointer-events]="isProcessing() || isDisliked() ? 'none' : 'initial'"
           class="thumb-up-wrapper"
           [class.favorite]="isFavorite()"
           [title]="('pokemons.card.favoriteBtn.' +
@@ -186,12 +188,16 @@ import { TypeColorPipe } from './../../pipes/type-color.pipe';
         background: rgba(0, 0, 0, 0.5);
       }
     }
-  `
+    `
 })
-export class CardItemComponent implements OnInit {
+export class CardItemComponent implements OnInit, OnDestroy {
+  private readonly HIDE_CARD_DELAY = 350;
+  private timeoutId: ReturnType<typeof setTimeout> | null = null;
   pokemon = input.required<Pokemon>();
   isFavorite = input<boolean>(false);
   isLoggedIn = input<boolean>(false);
+  isDisliked = input<boolean>(false);
+  isProcessing = input<boolean>(false);
   toggleFavorite = output<Pokemon['_id']>();
   likeMapping: Record<string, string> = {
     '=0': 'empty',
@@ -199,11 +205,36 @@ export class CardItemComponent implements OnInit {
     'other': 'multiple'
   }
 
+  constructor() {
+    effect(() => {
+      if (this.isDisliked()) {
+        this.cleanupTimeout()
+        this.opacity = 0;
+        this.timeoutId = setTimeout(() => {
+          this.display = 'none';
+        }, this.HIDE_CARD_DELAY);
+      }
+    })
+  }
+
   @HostBinding('style.opacity')
   protected opacity = 0;
+  @HostBinding('style.display')
+  protected display = 'flex';
+
   ngOnInit(): void {
-    setTimeout(() => {
+    this.timeoutId = setTimeout(() => {
       this.opacity = 1;
     });
+  }
+
+  ngOnDestroy(): void {
+    this.cleanupTimeout();
+  }
+
+  cleanupTimeout(): void {
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+    }
   }
 }

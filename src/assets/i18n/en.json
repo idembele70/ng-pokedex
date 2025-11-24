@@ -31,6 +31,7 @@
       }
     },
     "emptyList": "No Pokemon to display at the moment",
+    "emptyLikeList": "No Pokemon liked at the moment",
     "notification": {
       "fetchCurrentPage": {
         "messages": {

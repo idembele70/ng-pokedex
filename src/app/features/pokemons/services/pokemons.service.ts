@@ -33,7 +33,7 @@ export class PokemonsService {
   constructor(
     private readonly loaderService: LoaderService,
     private readonly notificationService: NotificationService,
-  ) {}
+  ) { }
 
   loadMorePokemons(): void {
     if (!this.isLastPage()) {
@@ -43,6 +43,7 @@ export class PokemonsService {
   }
 
   setPokemonFilters(newFilters: PokemonFilter): void {
+    this.resetState();
     this._pokemonFilters.set(newFilters);
   }
 
@@ -102,12 +103,16 @@ export class PokemonsService {
     ).subscribe();
   }
 
-  resetState() {
+  resetState(): void {
     this._currentPokemons.set([]);
     this._currentPage.set(1);
     this._totalPages.set(1);
     this._limitPerPage.set(20);
     this._pokemonFilters.set({});
+  }
+
+  setLimitPerPage(limit: number): void {
+    this._limitPerPage.set(limit);
   }
 
   private get _params(): HttpParams {
@@ -117,11 +122,9 @@ export class PokemonsService {
     };
 
     for (const [key, value] of Object.entries(this._pokemonFilters())) {
-      if (
-        value !== undefined &&
-        value !== null
-      )
+      if ( value || value === 0) {
         params[key] = value;
+      }
     }
     return new HttpParams({ fromObject: params });
   }
