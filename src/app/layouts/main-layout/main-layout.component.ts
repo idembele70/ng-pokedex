@@ -39,7 +39,8 @@ import { NavbarComponent } from './navbar/navbar.component';
       }
       @if(!loaderService.isSearching() &&
         !loaderService.isLoading() &&
-        !pokemonsService.isCurrentPokemonsEmpty()) { 
+        !pokemonsService.isCurrentPokemonsEmpty() &&
+        !loaderService.isTogglingLike()) { 
         <pokeball-loader [notFixed]="true" />
       }
       @if (authService.isAuthDialogVisible()) {

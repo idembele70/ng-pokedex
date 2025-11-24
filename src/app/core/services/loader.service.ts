@@ -20,6 +20,7 @@ export class LoaderService {
     this._isTogglingLike()
   );
   readonly isSearching = computed(() => this._isSearching());
+  readonly isTogglingLike = computed(() => this._isTogglingLike());
   readonly DURATION = 500;
 
   setIsLoading(state: boolean): void {
