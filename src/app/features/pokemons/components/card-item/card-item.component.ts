@@ -1,5 +1,5 @@
 import { I18nPluralPipe, NgOptimizedImage } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, HostBinding, input, OnInit, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, HostBinding, input, OnDestroy, OnInit, output } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Pokemon } from '../../models/pokemon.model';
 import { TypeColorPipe } from './../../pipes/type-color.pipe';
@@ -188,10 +188,11 @@ import { TypeColorPipe } from './../../pipes/type-color.pipe';
         background: rgba(0, 0, 0, 0.5);
       }
     }
-  `
+    `
 })
-export class CardItemComponent implements OnInit {
+export class CardItemComponent implements OnInit, OnDestroy {
   private readonly HIDE_CARD_DELAY = 350;
+  private timeoutId: ReturnType<typeof setTimeout> | null = null;
   pokemon = input.required<Pokemon>();
   isFavorite = input<boolean>(false);
   isLoggedIn = input<boolean>(false);
@@ -207,8 +208,9 @@ export class CardItemComponent implements OnInit {
   constructor() {
     effect(() => {
       if (this.isDisliked()) {
+        this.cleanupTimeout()
         this.opacity = 0;
-        setTimeout(() => {
+        this.timeoutId = setTimeout(() => {
           this.display = 'none';
         }, this.HIDE_CARD_DELAY);
       }
@@ -221,8 +223,18 @@ export class CardItemComponent implements OnInit {
   protected display = 'flex';
 
   ngOnInit(): void {
-    setTimeout(() => {
+    this.timeoutId = setTimeout(() => {
       this.opacity = 1;
     });
+  }
+
+  ngOnDestroy(): void {
+    this.cleanupTimeout();
+  }
+
+  cleanupTimeout(): void {
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+    }
   }
 }

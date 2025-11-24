@@ -43,6 +43,7 @@ export class PokemonsService {
   }
 
   setPokemonFilters(newFilters: PokemonFilter): void {
+    this.resetState();
     this._pokemonFilters.set(newFilters);
   }
 

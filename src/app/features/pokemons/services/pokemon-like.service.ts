@@ -56,7 +56,7 @@ export class PokemonLikeService {
     ).subscribe();
   }
 
-  resetState() {
+  resetState(): void {
     this._dislikedIds.set(new Set);
   }
 
