@@ -33,7 +33,7 @@ export class PokemonsService {
   constructor(
     private readonly loaderService: LoaderService,
     private readonly notificationService: NotificationService,
-  ) {}
+  ) { }
 
   loadMorePokemons(): void {
     if (!this.isLastPage()) {
@@ -122,11 +122,9 @@ export class PokemonsService {
     };
 
     for (const [key, value] of Object.entries(this._pokemonFilters())) {
-      if (
-        value !== undefined &&
-        value !== null
-      )
+      if ( value || value === 0) {
         params[key] = value;
+      }
     }
     return new HttpParams({ fromObject: params });
   }
