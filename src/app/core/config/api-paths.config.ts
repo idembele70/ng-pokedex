@@ -14,7 +14,9 @@ const API_PATHS = {
   AUTH: createAuthApiPaths('auth'),
 };
 
-export const API_PATHS_TOKEN = new InjectionToken<typeof API_PATHS>('API_PATHS', {
+export type ApiPaths = typeof API_PATHS;
+
+export const API_PATHS_TOKEN = new InjectionToken<ApiPaths>('API_PATHS', {
   providedIn: 'root',
   factory: () => API_PATHS,
 });
