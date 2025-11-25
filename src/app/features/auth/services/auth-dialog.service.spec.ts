@@ -3,13 +3,13 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideToastr } from 'ngx-toastr';
-import { EMPTY, first, firstValueFrom, of } from 'rxjs';
+import { firstValueFrom, of } from 'rxjs';
+import { AuthService } from '../../../core/services/auth.service';
+import { JwtService } from '../../../core/services/jwt.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { AuthPayload, LoginResponse, RegisterResponse } from '../models/auth-dialog.model';
 import { API_PATHS_TOKEN, ApiPaths } from './../../../core/config/api-paths.config';
 import { AuthDialogService } from './auth-dialog.service';
-import { JwtService } from '../../../core/services/jwt.service';
-import { AuthService } from '../../../core/services/auth.service';
 describe('AuthDialogService', () => {
   let httpMock: HttpTestingController;
   let service: AuthDialogService;
@@ -17,8 +17,8 @@ describe('AuthDialogService', () => {
   let notificationService: NotificationService;
   let jwtService: JwtService;
   let authService: AuthService;
-  let notifySuccessSpy: jasmine.Spy<NotificationService['notifySuccess']>
-  let notifyErrorSpy: jasmine.Spy<NotificationService['notifyError']>
+  let notifySuccessSpy: jasmine.Spy<NotificationService['notifySuccess']>;
+  let notifyErrorSpy: jasmine.Spy<NotificationService['notifyError']>;
   const mockPayload: AuthPayload = {
     email: 'test@example.invalid',
     password: 'StrongP@ssword-_123',
@@ -113,18 +113,18 @@ describe('AuthDialogService', () => {
       email: 'test@invalid.invalid',
       accessToken: 'test-access-token',
     };
-    const loginNotificationPrefix = 'auth.login'
+    const loginNotificationPrefix = 'auth.login';
     it('should send POST request to /login', async() => {
-     const promise =  firstValueFrom(service.login(mockPayload));
+     const promise = firstValueFrom(service.login(mockPayload));
       httpMock
         .expectOne(req =>
           req.url === apiPaths.AUTH.LOGIN &&
           req.method === 'POST'
         )
         .flush(mockLoginResponse);
-      await expectAsync(promise).toBeResolved()
+      await expectAsync(promise).toBeResolved();
     });
-    it('should save accessToken, setCurrentUser and set auth visiblity to false', async () => {
+    it('should save accessToken, setCurrentUser and set auth visibility to false', async () => {
       const saveTokenSpy = spyOn(jwtService, 'saveToken');
       const setCurrentUserSpy = spyOn(authService, 'setCurrentUser');
       const setAuthVisibilitySpy = spyOn(authService, 'setAuthVisibility');
@@ -144,7 +144,7 @@ describe('AuthDialogService', () => {
       expect(setAuthVisibilitySpy)
         .withContext('set to false once')
         .toHaveBeenCalledOnceWith(false);
-    })
+    });
     it('should notify success once', () => {
       service.login(mockPayload).subscribe();
       httpMock
@@ -152,7 +152,7 @@ describe('AuthDialogService', () => {
         .flush(mockLoginResponse);
       expect(notifySuccessSpy)
         .withContext('notify success once')
-        .toHaveBeenCalledOnceWith(loginNotificationPrefix)
+        .toHaveBeenCalledOnceWith(loginNotificationPrefix);
     });
     it('should handle login error and notifyError once', (done) => {
       service.login(mockPayload).subscribe({
