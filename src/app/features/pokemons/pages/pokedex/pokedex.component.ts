@@ -1,7 +1,7 @@
 import { Component, DestroyRef, HostBinding, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe } from '@ngx-translate/core';
-import { tap } from 'rxjs';
+import { switchMap, tap } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth.service';
 import { LoaderService } from '../../../../core/services/loader.service';
 import { ScrollTopButtonComponent } from "../../../../layouts/main-layout/scroll-top-button/scroll-top-button.component";
@@ -11,6 +11,7 @@ import { SearchBarComponent } from "../../components/search-bar/search-bar.compo
 import { IsLikedPipe } from '../../pipes/is-liked.pipe';
 import { PokemonLikeService } from '../../services/pokemon-like.service';
 import { PokemonsService } from '../../services/pokemons.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-pokedex',
@@ -53,21 +54,31 @@ export class PokedexComponent implements OnInit {
   protected readonly authService = inject(AuthService);
   protected readonly pokemonLikeService = inject(PokemonLikeService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly route = inject(ActivatedRoute);
 
   @HostBinding('class.card-item-container')
   protected readonly cardItemContainer = true;
 
-  ngOnInit(): void {
-    this.refreshPokemonsListeners();
-  }
-
-  private refreshPokemonsListeners() {
-    this.authService.isLoggedIn$.pipe(
-      takeUntilDestroyed(this.destroyRef),
-      tap(() => {
-        this.pokemonsService.resetState();
+  constructor() {
+    this.route.queryParamMap.pipe(
+      tap(param => {
+        this.pokemonsService.setPokemonFilters({
+          name: param.get('name') ?? '',
+          id: param.get('id') ?? '',
+          type: param.get('type') ?? '',
+        });
         this.pokemonsService.fetchCurrentPage();
       }),
-    ).subscribe();
+      switchMap(() => {
+        return this.authService.isLoggedIn$.pipe(
+          takeUntilDestroyed(this.destroyRef),
+          tap(() => {
+          }))
+      })
+    ).subscribe()
   }
+
+  ngOnInit(): void {
+  }
+
 }
