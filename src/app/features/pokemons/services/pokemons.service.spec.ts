@@ -110,12 +110,12 @@ describe('PokemonsService', () => {
     beforeEach(() => {
       fetchCurrentPageSpy = spyOn(service, 'fetchCurrentPage').and.callThrough();
     });
-    it('should not load pokemons', () => {
+    it('should not load pokemons when on last page', () => {
       service.loadMorePokemons();
       expect(fetchCurrentPageSpy).not.toHaveBeenCalled();
     });
 
-    it('should load pokemons', () => {
+    it('should load more pokemons and increment page when not on last page', () => {
       service.fetchCurrentPage();
       expect(service.isLastPage()).toBeFalse();
       expect(fetchCurrentPageSpy).toHaveBeenCalledTimes(1);
@@ -268,7 +268,7 @@ describe('PokemonsService', () => {
       service.setLimitPerPage(40);
       expect(service.currentPokemons().length).toBe(2);
       expect(service.isLastPage()).toBeFalse();
-      expect(service.limitPerPage()).toBe(40)
+      expect(service.limitPerPage()).toBe(40);
       expect(service.pokemonFilters()).toEqual({});
       service.resetState();
       expect(service.currentPokemons().length).toBe(0);

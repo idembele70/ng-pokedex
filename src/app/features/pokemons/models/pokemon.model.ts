@@ -9,9 +9,9 @@ export interface Pokemon {
 }
 export interface PokemonPage {
   pokemons: Pokemon[];
-  currentPage: number;
-  totalPages: number;
-  totalItems: number;
+  currentPage: string;
+  totalPages: string;
+  totalItems: string;
 }
 
 export interface PokemonFilter {
