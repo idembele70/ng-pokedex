@@ -1,12 +1,12 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { catchError, finalize, map, switchMap, throwError } from 'rxjs';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
+import { catchError, finalize, map, Observable, switchMap, tap } from 'rxjs';
 import { API_PATHS_TOKEN } from '../config/api-paths.config';
 import { AuthMode, CurrentUser } from '../models/auth.model';
 import { JwtService } from './jwt.service';
 import { NotificationService } from './notification.service';
-import { toObservable } from '@angular/core/rxjs-interop';
-import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -40,19 +40,10 @@ export class AuthService {
     this._currentUser.set(user);
   }
 
-  initAuth(): void {
-    if (!this.jwtService.getToken()) return;
-
-    this.http.get<CurrentUser>(this.apiPaths.AUTH.ME).pipe(
-      catchError((err: HttpErrorResponse) => {
-        if (err.url?.endsWith(this.apiPaths.AUTH.REFRESH_TOKEN)) {
-          this.logout();
-          return this.notificationService.notifyError('auth.jwt.refreshToken');
-        }
-        return throwError(() => err);
-      }),
-    )
-      .subscribe((user) => this.setCurrentUser(user));
+  initAuth(): Observable<CurrentUser> {
+    return this.http.get<CurrentUser>(this.apiPaths.AUTH.ME).pipe(
+      tap((user) => this.setCurrentUser(user))
+    );
   }
 
   logout(): void {

@@ -1,10 +1,12 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { debounceTime, distinctUntilChanged, distinctUntilKeyChanged, tap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, tap } from 'rxjs';
 import { LoaderService } from '../../../../core/services/loader.service';
-import { PokemonFilter, PokemonFilterKeys } from '../../models/pokemon.model';
+import { PokemonUtilities } from '../../../utilities/pokemon.utilities';
+import { PokemonFilter } from '../../models/pokemon.model';
 import { PokemonsService } from '../../services/pokemons.service';
 @Component({
   selector: 'app-search-bar',
@@ -27,6 +29,7 @@ import { PokemonsService } from '../../services/pokemons.service';
         <input
           class="base-input"
           type="search"
+          inputmode="numeric"
           name="id"
           autocomplete="off"
           [placeholder]="'searchBars.idInput.placeholder' | translate"
@@ -48,14 +51,15 @@ import { PokemonsService } from '../../services/pokemons.service';
 export class SearchBarComponent implements OnInit {
   private readonly DEBOUNCE_TIME = 250;
   private readonly fb = inject(FormBuilder);
-  protected readonly searchForm = this.fb.nonNullable.group({
-    name: [''],
-    id: [''],
-    type: [''],
-  });
+  protected readonly searchForm: FormGroup;
   private readonly pokemonsService = inject(PokemonsService);
   private readonly loaderService = inject(LoaderService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly router = inject(Router);
+
+  constructor() {
+    this.searchForm = this.fb.nonNullable.group(this.pokemonsService.pokemonFilters());
+  }
 
   ngOnInit(): void {
     this.searchForm.valueChanges
@@ -63,39 +67,48 @@ export class SearchBarComponent implements OnInit {
         debounceTime(this.DEBOUNCE_TIME),
         distinctUntilChanged((prev, curr) => JSON.stringify(prev) ===
           JSON.stringify(curr)),
-        tap(() => this.loaderService.setIsSearching(true)),
+        tap((values) => {
+          this.loaderService.setIsSearching(true);
+          this.filterPokemons(values);
+        }),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe(
-        values => {
-          this.sanitizeUserInput(values);
-        }
-      )
+      .subscribe();
   }
 
-  private sanitizeUserInput(values: PokemonFilter): void {
-    const lettersRegex = /[^a-zA-Z]/g;
-    const sanitizedValues = {
-      name: values.name?.replaceAll(lettersRegex, '') ?? '',
-      id: values.id?.replaceAll(/\D/g, '') ?? '',
-      type: values.type?.replaceAll(lettersRegex, '') ?? '',
-    };
-    const currentValues = this.searchForm.value;
-    const hasInvalidInput = Object.keys(sanitizedValues).some(
-      key => sanitizedValues[key as PokemonFilterKeys] !==
-        currentValues[key as PokemonFilterKeys]
-    );
-
-    this.pokemonsService.setPokemonFilters(sanitizedValues);
-
-    this.searchForm.setValue(sanitizedValues, {
+  private filterPokemons(values: PokemonFilter): void {
+    const sanitizedValues = this.sanitizeUserInput(values);
+    this.searchForm.patchValue(sanitizedValues, {
       emitEvent: false,
     });
 
-    if (hasInvalidInput) {
+    const hasValueChanged = this.hasValueChanged(values, sanitizedValues);
+    if (hasValueChanged) {
       this.loaderService.setIsSearching(false);
       return;
     }
+
+    const currentFilters = PokemonUtilities.omitNullishValue(sanitizedValues);
+    this.pokemonsService.setPokemonFilters(currentFilters);
+    this.router.navigate([], { queryParams: currentFilters });
     this.pokemonsService.filterPokemon();
   }
+
+  private sanitizeUserInput(values: PokemonFilter): PokemonFilter {
+    const lettersRegex = /[^a-zA-Z]/g;
+    return {
+      name: values.name?.replaceAll(lettersRegex, ''),
+      id: values.id?.replaceAll(/\D/g, ''),
+      type: values.type?.replaceAll(lettersRegex, ''),
+    };
+  }
+
+  private hasValueChanged(
+    currentValues: PokemonFilter,
+    sanitizedValues: PokemonFilter,
+  ): boolean {
+    return JSON.stringify(currentValues) !==
+      JSON.stringify(sanitizedValues);
+  }
+
 }

@@ -28,6 +28,7 @@ export class PokemonsService {
     this._isFilterEmpty &&
     this._currentPokemons().length === 0
   );
+  readonly pokemonFilters = this._pokemonFilters.asReadonly();
 
 
   constructor(
@@ -121,12 +122,7 @@ export class PokemonsService {
       limit: this._limitPerPage().toString(),
     };
 
-    for (const [key, value] of Object.entries(this._pokemonFilters())) {
-      if ( value || value === 0) {
-        params[key] = value;
-      }
-    }
-    return new HttpParams({ fromObject: params });
+    return new HttpParams({ fromObject: { ...params, ...this._pokemonFilters() } });
   }
 
   private get _isFilterEmpty(): boolean {
