@@ -38,7 +38,7 @@ export class PokemonsService {
 
   loadMorePokemons(): void {
     if (!this.isLastPage()) {
-      this._currentPage.update(prev => prev + 1);
+      this._currentPage.update(prev => +prev + 1);
       this.fetchCurrentPage();
     }
   }
@@ -55,8 +55,8 @@ export class PokemonsService {
       delay(this.FILTER_DELAY),
       tap((res) => {
         this._currentPokemons.set(res.pokemons);
-        this._currentPage.set(res.currentPage);
-        this._totalPages.set(res.totalPages);
+        this._currentPage.set(+res.currentPage);
+        this._totalPages.set(+res.totalPages);
       }),
       catchError(() => this.notificationService.notifyError('pokemons.notification.search')),
       finalize(() => this.loaderService.setIsSearching(false)),
@@ -78,8 +78,8 @@ export class PokemonsService {
       catchError(() => this.notificationService.notifyError('pokemons.notification.getUserLiked')),
       tap((res) => {
         this._currentPokemons.update(prev => [...prev, ...res.pokemons]);
-        this._currentPage.set(res.currentPage);
-        this._totalPages.set(res.totalPages);
+        this._currentPage.set(+res.currentPage);
+        this._totalPages.set(+res.totalPages);
       }),
       finalize(() => this.loaderService.setIsLoadingMore(false)),
     ).subscribe();
@@ -92,12 +92,12 @@ export class PokemonsService {
 
     this.loaderService.setIsLoadingMore(true);
     this.httpClient.get<PokemonPage>(url, {
-      params: this._params
+      params: this._params,
     }).pipe(
       tap((res) => {
         this._currentPokemons.update(prev => [...prev, ...res.pokemons]);
-        this._currentPage.set(res.currentPage);
-        this._totalPages.set(res.totalPages);
+        this._currentPage.set(+res.currentPage);
+        this._totalPages.set(+res.totalPages);
       }),
       catchError(() => this.notificationService.notifyError('pokemons.notification.fetchCurrentPage')),
       finalize(() => this.loaderService.setIsLoadingMore(false)),
