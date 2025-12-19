@@ -10,14 +10,4 @@ export class PokemonUtilities {
     }
     return params;
   }
-
-  static o1Equalo2<T extends PokemonFilterKeys>(
-    o1: Record<T, string>,
-    o2: Record<T, string>
-  ): boolean {
-    return Object.keys(o1).some(
-      key => o1[key as T] !==
-        o2[key as T]
-    );
-  }
 }

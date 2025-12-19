@@ -1,9 +1,9 @@
-import { Component, DestroyRef, inject, Input, input, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { debounceTime, distinctUntilChanged, startWith, tap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, tap } from 'rxjs';
 import { LoaderService } from '../../../../core/services/loader.service';
 import { PokemonUtilities } from '../../../utilities/pokemon.utilities';
 import { PokemonFilter } from '../../models/pokemon.model';
@@ -68,7 +68,7 @@ export class SearchBarComponent implements OnInit {
         distinctUntilChanged((prev, curr) => JSON.stringify(prev) ===
           JSON.stringify(curr)),
         tap((values) => {
-          this.loaderService.setIsSearching(true)
+          this.loaderService.setIsSearching(true);
           this.filterPokemons(values);
         }),
         takeUntilDestroyed(this.destroyRef),
@@ -94,14 +94,13 @@ export class SearchBarComponent implements OnInit {
     this.pokemonsService.filterPokemon();
   }
 
-  private sanitizeUserInput(values: PokemonFilter) {
+  private sanitizeUserInput(values: PokemonFilter): PokemonFilter {
     const lettersRegex = /[^a-zA-Z]/g;
     return {
       name: values.name?.replaceAll(lettersRegex, ''),
       id: values.id?.replaceAll(/\D/g, ''),
       type: values.type?.replaceAll(lettersRegex, ''),
     };
-
   }
 
   private hasValueChanged(

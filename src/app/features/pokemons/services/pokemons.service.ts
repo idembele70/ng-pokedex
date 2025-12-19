@@ -122,7 +122,6 @@ export class PokemonsService {
       limit: this._limitPerPage().toString(),
     };
 
-    
     return new HttpParams({ fromObject: { ...params, ...this._pokemonFilters() } });
   }
 

@@ -61,6 +61,7 @@ export class PokedexComponent implements OnInit {
 
   constructor() {
     this.route.queryParamMap.pipe(
+      takeUntilDestroyed(this.destroyRef),
       tap(param => {
         this.pokemonsService.setPokemonFilters({
           name: param.get('name') ?? '',
@@ -69,13 +70,8 @@ export class PokedexComponent implements OnInit {
         });
         this.pokemonsService.fetchCurrentPage();
       }),
-      switchMap(() => {
-        return this.authService.isLoggedIn$.pipe(
-          takeUntilDestroyed(this.destroyRef),
-          tap(() => {
-          }))
-      })
-    ).subscribe()
+      switchMap(() => this.authService.isLoggedIn$)
+    ).subscribe();
   }
 
   ngOnInit(): void {

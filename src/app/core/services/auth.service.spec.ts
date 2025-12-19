@@ -1,19 +1,14 @@
-import { TestBed } from "@angular/core/testing"
-import { AuthService } from "./auth.service";
-import { JwtService } from "./jwt.service";
+import { provideHttpClient } from "@angular/common/http";
 import { HttpTestingController, provideHttpClientTesting } from "@angular/common/http/testing";
-import { provideHttpClient, withInterceptors } from "@angular/common/http";
-import { API_PATHS_TOKEN, ApiPaths } from "../config/api-paths.config";
-import { toastrProviders } from "../config/toastr.config";
-import { i18nProviders } from "../config/i18n.config";
-import { apiInterceptor } from "../interceptors/api.interceptor";
+import { TestBed } from "@angular/core/testing";
 import { provideTranslateService } from "@ngx-translate/core";
 import { provideToastr } from "ngx-toastr";
 import { firstValueFrom } from "rxjs";
+import { API_PATHS_TOKEN, ApiPaths } from "../config/api-paths.config";
 import { CurrentUser } from "../models/auth.model";
+import { AuthService } from "./auth.service";
 
 let service: AuthService;
-let jwtService: JwtService;
 let httpMock: HttpTestingController;
 let apiPaths: ApiPaths;
 describe('AuthService', () => {
@@ -27,7 +22,6 @@ describe('AuthService', () => {
       ],
     });
     service = TestBed.inject(AuthService);
-    jwtService = TestBed.inject(JwtService);
     apiPaths = TestBed.inject(API_PATHS_TOKEN);
     httpMock = TestBed.inject(HttpTestingController);
   });
@@ -74,4 +68,4 @@ describe('AuthService', () => {
       expect(service.isLoggedIn()).toBeFalse();
     });
   });
-})
+});
