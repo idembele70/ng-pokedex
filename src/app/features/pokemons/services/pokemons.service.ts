@@ -5,6 +5,7 @@ import { LoaderService } from '../../../core/services/loader.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { POKEMON_API_PATHS_TOKEN } from '../config/pokemons-api-paths.config';
 import { Pokemon, PokemonFilter, PokemonPage } from '../models/pokemon.model';
+import { PokemonUtilities } from '../../utilities/pokemon.utilities';
 
 @Injectable()
 export class PokemonsService {
@@ -45,7 +46,8 @@ export class PokemonsService {
 
   setPokemonFilters(newFilters: PokemonFilter): void {
     this.resetState();
-    this._pokemonFilters.set(newFilters);
+    const filter = PokemonUtilities.omitNullishValue(newFilters);
+    this._pokemonFilters.set(filter);
   }
 
   filterPokemon(): void {
