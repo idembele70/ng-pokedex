@@ -11,23 +11,22 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
     'type': 'search',
     '[name]': "name()",
     'autocomplete': 'off',
-    '[value]': 'value'
-
+    '[value]': 'value',
   },
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => SearchInputDirective),
-      multi: true
-    }
+      multi: true,
+    },
   ],
 })
 export class SearchInputDirective implements ControlValueAccessor {
-  name = input.required<string>(); 
-  protected value = '';
+  name = input.required<string>();
+  protected value: string = '';
 
   onChange: (value: string) => void = () => { };
-  onTouched: () => void = () => { }
+  onTouched: () => void = () => { };
 
   registerOnChange(fn: (value: string) => void): void {
     this.onChange = fn;
@@ -37,15 +36,13 @@ export class SearchInputDirective implements ControlValueAccessor {
     this.onTouched = fn;
   }
 
-  writeValue(value: string): void {
-    if (value) {
-      this.value = value;
-    }
+  writeValue(value: string | null): void {
+      this.value = value ?? '';
   }
 
   keyDown(event: KeyboardEvent) {
     const target = event.target as HTMLInputElement;
-    const allowedKeys = target.name === 'id' ? /\d/ : /[a-zA-Z]/
+    const allowedKeys = target.name === 'id' ? /\d/ : /[a-zA-Z]/;
     if (!allowedKeys.test(event.key)) {
       event.preventDefault();
       return;
