@@ -1,11 +1,12 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { debounceTime, distinctUntilChanged, tap } from 'rxjs';
 import { LoaderService } from '../../../../core/services/loader.service';
 import { PokemonUtilities } from '../../../utilities/pokemon.utilities';
+import { SearchInputDirective } from '../../directives/search-input.directive';
 import { PokemonFilter } from '../../models/pokemon.model';
 import { PokemonsService } from '../../services/pokemons.service';
 @Component({
@@ -14,32 +15,28 @@ import { PokemonsService } from '../../services/pokemons.service';
   imports: [
     TranslatePipe,
     ReactiveFormsModule,
+    SearchInputDirective,
   ],
   template: `
     <form [formGroup]="searchForm">
       <input
-        class="base-input"
-        type="search"
+        appSearchInput
         name="name"
-        autocomplete="off"
         [placeholder]="'searchBars.nameInput.placeholder' | translate"
         formControlName="name"
-      />
+        />
       <div>
         <input
-          class="base-input"
-          type="search"
+          appSearchInput
           inputmode="numeric"
           name="id"
-          autocomplete="off"
           [placeholder]="'searchBars.idInput.placeholder' | translate"
           formControlName="id"
+          maxlength="3"
         />
         <input
-          class="base-input"
-          type="search"
+          appSearchInput
           name="type"
-          autocomplete="off"
           [placeholder]="'searchBars.typeInput.placeholder' | translate"
           formControlName="type"
         />
@@ -48,67 +45,45 @@ import { PokemonsService } from '../../services/pokemons.service';
   `,
   styleUrl: './search-bar.component.scss'
 })
-export class SearchBarComponent implements OnInit {
+export class SearchBarComponent {
   private readonly DEBOUNCE_TIME = 250;
   private readonly fb = inject(FormBuilder);
   protected readonly searchForm: FormGroup;
   private readonly pokemonsService = inject(PokemonsService);
   private readonly loaderService = inject(LoaderService);
-  private readonly destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   constructor() {
-    this.searchForm = this.fb.nonNullable.group(this.pokemonsService.pokemonFilters());
-  }
-
-  ngOnInit(): void {
+    const { queryParamMap } = this.route.snapshot;
+    const queries = {
+      id: queryParamMap.get('id') ?? '',
+      name: queryParamMap.get('name') ?? '',
+      type: queryParamMap.get('type') ?? '',
+    };
+    this.searchForm = this.fb.nonNullable.group(queries);
+    this.pokemonsService.setPokemonFilters(queries);
     this.searchForm.valueChanges
       .pipe(
         debounceTime(this.DEBOUNCE_TIME),
-        distinctUntilChanged((prev, curr) => JSON.stringify(prev) ===
-          JSON.stringify(curr)),
+        distinctUntilChanged((prev, curr) =>
+          JSON.stringify(prev) === JSON.stringify(curr)),
         tap((values) => {
           this.loaderService.setIsSearching(true);
           this.filterPokemons(values);
         }),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe();
+        takeUntilDestroyed(),
+      ).subscribe();
   }
 
   private filterPokemons(values: PokemonFilter): void {
-    const sanitizedValues = this.sanitizeUserInput(values);
-    this.searchForm.patchValue(sanitizedValues, {
-      emitEvent: false,
+    this.loaderService.setIsSearching(false);
+    this.pokemonsService.setPokemonFilters(values);
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: PokemonUtilities.omitNullishValue(values),
     });
-
-    const hasValueChanged = this.hasValueChanged(values, sanitizedValues);
-    if (hasValueChanged) {
-      this.loaderService.setIsSearching(false);
-      return;
-    }
-
-    const currentFilters = PokemonUtilities.omitNullishValue(sanitizedValues);
-    this.pokemonsService.setPokemonFilters(currentFilters);
-    this.router.navigate([], { queryParams: currentFilters });
     this.pokemonsService.filterPokemon();
-  }
-
-  private sanitizeUserInput(values: PokemonFilter): PokemonFilter {
-    const lettersRegex = /[^a-zA-Z]/g;
-    return {
-      name: values.name?.replaceAll(lettersRegex, ''),
-      id: values.id?.replaceAll(/\D/g, ''),
-      type: values.type?.replaceAll(lettersRegex, ''),
-    };
-  }
-
-  private hasValueChanged(
-    currentValues: PokemonFilter,
-    sanitizedValues: PokemonFilter,
-  ): boolean {
-    return JSON.stringify(currentValues) !==
-      JSON.stringify(sanitizedValues);
   }
 
 }
