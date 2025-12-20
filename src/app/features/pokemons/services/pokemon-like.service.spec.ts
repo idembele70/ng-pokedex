@@ -14,6 +14,8 @@ describe('PokemonLikeService', () => {
   let httpMock: HttpTestingController;
   let loaderService: LoaderService;
   let notificationService: NotificationService;
+  const mockId: Pokemon['_id'] = '692486f93ed56d18b59dc29d';
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
@@ -38,38 +40,36 @@ describe('PokemonLikeService', () => {
   })
 
   describe('toggleLike', () => {
-    const mockId: Pokemon['_id'] = '692486f93ed56d18b59dc29d';
     let setIsTogglingLikeSpy: jasmine.Spy<(state: boolean) => void>;
     let notifySuccessSpy: jasmine.Spy<(prefix: string) => void>;
     beforeEach(() => {
       setIsTogglingLikeSpy = spyOn(loaderService, 'setIsTogglingLike');
       notifySuccessSpy = spyOn(notificationService, 'notifySuccess').and.callThrough();
     });
-    it('should add pokemon id to likeIds array', () => {
+    it('should add pokemon id to likeIds set', () => {
       service.toggleLike(mockId);
       expect(setIsTogglingLikeSpy).toHaveBeenCalledOnceWith(true);
       const req = httpMock.expectOne('likes/' + mockId);
       expect(req.request.method).toBe('POST');
       req.flush(true);
-      expect(notifySuccessSpy).toHaveBeenCalledOnceWith('pokemons.notification.like')
+      expect(notifySuccessSpy).toHaveBeenCalledOnceWith('pokemons.notification.like');
       expect(setIsTogglingLikeSpy).toHaveBeenCalledWith(false);
       expect(setIsTogglingLikeSpy).toHaveBeenCalledTimes(2);
       expect(service.likedIds().size).toBe(1);
       expect(service.likedIds().has(mockId)).toBeTrue();
     });
-    it('should remove pokemon id from likedIds array', () => {
-      const id: Pokemon['_id'] = '692486f93ed56d18b59dc29d';
-      service.toggleLike(id);
+    it('should remove pokemon id from likedIds set', () => {
+      service.toggleLike(mockId);
       const likeReq = httpMock.expectOne('likes/' + mockId);
       likeReq.flush(true);
       notifySuccessSpy.calls.reset();
       expect(service.likedIds().has(mockId)).toBeTrue();
       expect(service.likedIds().size).toBe(1);
-      service.toggleLike(id);
+      service.toggleLike(mockId);
       const dislikeReq = httpMock.expectOne('likes/' + mockId);
       expect(dislikeReq.request.method).toBe('DELETE');
       dislikeReq.flush(false);
-      expect(notifySuccessSpy).toHaveBeenCalledOnceWith('pokemons.notification.dislike')
+      expect(notifySuccessSpy).toHaveBeenCalledOnceWith('pokemons.notification.dislike');
       expect(setIsTogglingLikeSpy).toHaveBeenCalledTimes(4);
       expect(setIsTogglingLikeSpy).toHaveBeenCalledWith(true);
       expect(setIsTogglingLikeSpy).toHaveBeenCalledWith(false);
@@ -89,7 +89,7 @@ describe('PokemonLikeService', () => {
       req.flush(mockIds);
       expect(service.likedIds().size).toBe(2);
     });
-    it('should handle pokemons not found' , () => {
+    it('should handle pokemons not found', () => {
       const mockErrorResponse: Pick<HttpErrorResponse, 'status' | 'statusText'> = {
         status: 404,
         statusText: 'Not Found',
